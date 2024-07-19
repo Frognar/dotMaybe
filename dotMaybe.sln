@@ -4,9 +4,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{650D4057-331
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C96F34CD-F67C-4F60-BD1B-501A87ECD62E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotMaybe.Tests.Unit", "tests\dotMaybe.Tests.Unit\dotMaybe.Tests.Unit.csproj", "{1455C2C1-B1B8-4234-BCD0-4A5A76EA29BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotMaybe", "src\dotMaybe\dotMaybe.csproj", "{85100A3A-2968-4861-96D4-B419837EEF17}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution", "solution", "{157349B6-2063-4F96-8EDB-AAE484C38B4C}"
+	ProjectSection(SolutionItems) = preProject
+		CONTRIBUTING.md = CONTRIBUTING.md
+		.editorconfig = .editorconfig
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1455C2C1-B1B8-4234-BCD0-4A5A76EA29BC} = {C96F34CD-F67C-4F60-BD1B-501A87ECD62E}
+		{85100A3A-2968-4861-96D4-B419837EEF17} = {650D4057-3311-4170-9349-73E950D3E693}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1455C2C1-B1B8-4234-BCD0-4A5A76EA29BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1455C2C1-B1B8-4234-BCD0-4A5A76EA29BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1455C2C1-B1B8-4234-BCD0-4A5A76EA29BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1455C2C1-B1B8-4234-BCD0-4A5A76EA29BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85100A3A-2968-4861-96D4-B419837EEF17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85100A3A-2968-4861-96D4-B419837EEF17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85100A3A-2968-4861-96D4-B419837EEF17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85100A3A-2968-4861-96D4-B419837EEF17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
