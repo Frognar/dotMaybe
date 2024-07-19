@@ -13,4 +13,12 @@ public class MaybeCreationTests
             .Should()
             .Be(Some.With(value));
     }
+
+    [Fact]
+    public void Maybe_WithoutValue_ShouldBeNone()
+    {
+        None.OfType<int>()
+            .Should()
+            .Be(None.OfType<int>());
+    }
 }

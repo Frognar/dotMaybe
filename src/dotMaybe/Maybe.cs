@@ -20,4 +20,13 @@ public readonly record struct Maybe<T>
     {
         return default;
     }
+
+    /// <summary>
+    /// Creates an empty Maybe instance of the specified type.
+    /// </summary>
+    /// <returns>An empty Maybe instance of type T.</returns>
+    public static Maybe<T> None()
+    {
+        return default;
+    }
 }
