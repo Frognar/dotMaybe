@@ -11,22 +11,35 @@
 /// </remarks>
 public readonly record struct Maybe<T>
 {
+    private readonly IMaybe _maybe;
+
+    private Maybe(IMaybe maybe)
+    {
+        _maybe = maybe;
+    }
+
+    /// <summary>
+    /// Marker interface for a maybe type.
+    /// </summary>
+    private interface IMaybe;
+
     /// <summary>
     /// Creates a Maybe instance containing the specified value.
     /// </summary>
     /// <param name="value">The value to be wrapped in a Maybe instance.</param>
     /// <returns>A Maybe instance containing the specified value.</returns>
-    public static Maybe<T> Some(T value)
-    {
-        return default;
-    }
+    public static Maybe<T> Some(T value) => new(new SomeType(value));
 
     /// <summary>
     /// Creates an empty Maybe instance of the specified type.
     /// </summary>
     /// <returns>An empty Maybe instance of type T.</returns>
-    public static Maybe<T> None()
+    public static Maybe<T> None() => new(default(NoneType));
+
+    private readonly record struct SomeType(T Value) : IMaybe
     {
-        return default;
+        public T Value { get; } = Value;
     }
+
+    private readonly record struct NoneType : IMaybe;
 }
