@@ -41,4 +41,22 @@ public class MaybeMatchingTests
             .Should()
             .Be("NONE");
     }
+
+    [Property]
+    public async Task MatchAsync_WhenSome_MatchesSomeAsynchronously(int value)
+    {
+        (await Some.With(value)
+                .MatchAsync(() => "NONE", v => Task.FromResult(v.ToString())))
+            .Should()
+            .Be(value.ToString());
+    }
+
+    [Fact]
+    public async Task MatchAsync_WhenNone_MatchesNoneSynchronously()
+    {
+        (await None.OfType<int>()
+                .MatchAsync(() => "NONE", v => Task.FromResult(v.ToString())))
+            .Should()
+            .Be("NONE");
+    }
 }

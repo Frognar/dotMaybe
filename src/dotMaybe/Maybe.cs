@@ -69,6 +69,25 @@ public readonly record struct Maybe<T>
     }
 
     /// <summary>
+    /// Applies a synchronous function for the empty case and an asynchronous function for the non-empty case.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result returned by both functions.</typeparam>
+    /// <param name="none">The synchronous function to execute if the Maybe instance is empty.</param>
+    /// <param name="some">The asynchronous function to execute if the Maybe instance contains a value.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains the result of executing
+    /// either the 'none' function (if Maybe is empty) or the 'some' function (if Maybe contains a value).
+    /// </returns>
+    public async Task<TResult> MatchAsync<TResult>(Func<TResult> none, Func<T, Task<TResult>> some)
+    {
+        return _maybe switch
+        {
+            SomeType s => await some(s.Value),
+            _ => none(),
+        };
+    }
+
+    /// <summary>
     /// Creates a Maybe instance containing the specified value.
     /// </summary>
     /// <param name="value">The value to be wrapped in a Maybe instance.</param>
