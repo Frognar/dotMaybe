@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace DotMaybe;
 
@@ -45,6 +46,25 @@ public readonly record struct Maybe<T>
         {
             SomeType s => some(s.Value),
             _ => none(),
+        };
+    }
+
+    /// <summary>
+    /// Asynchronously applies one of two functions based on whether the Maybe instance has a value or not.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result returned by both functions.</typeparam>
+    /// <param name="none">The asynchronous function to execute if the Maybe instance is empty.</param>
+    /// <param name="some">The asynchronous function to execute if the Maybe instance contains a value.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains the result of executing
+    /// either the 'none' function (if Maybe is empty) or the 'some' function (if Maybe contains a value).
+    /// </returns>
+    public async Task<TResult> MatchAsync<TResult>(Func<Task<TResult>> none, Func<T, Task<TResult>> some)
+    {
+        return _maybe switch
+        {
+            SomeType s => await some(s.Value),
+            _ => await none(),
         };
     }
 
