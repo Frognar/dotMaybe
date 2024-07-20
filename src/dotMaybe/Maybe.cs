@@ -1,4 +1,6 @@
-﻿namespace DotMaybe;
+﻿using System;
+
+namespace DotMaybe;
 
 /// <summary>
 /// Represents an optional value of type T.
@@ -22,6 +24,29 @@ public readonly record struct Maybe<T>
     /// Marker interface for a maybe type.
     /// </summary>
     private interface IMaybe;
+
+    /// <summary>
+    /// Applies one of two functions based on whether the Maybe instance has a value or not.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result returned by both functions.</typeparam>
+    /// <param name="none">The function to execute if the Maybe instance is empty.</param>
+    /// <param name="some">The function to execute if the Maybe instance contains a value.</param>
+    /// <returns>
+    /// The result of executing either the 'none' function (if Maybe is empty) or
+    /// the 'some' function (if Maybe contains a value).
+    /// </returns>
+    /// <remarks>
+    /// This method provides a way to handle both cases (empty and non-empty) of a Maybe instance
+    /// in a single expression, similar to pattern matching.
+    /// </remarks>
+    public TResult Match<TResult>(Func<TResult> none, Func<T, TResult> some)
+    {
+        return _maybe switch
+        {
+            SomeType s => some(s.Value),
+            _ => none(),
+        };
+    }
 
     /// <summary>
     /// Creates a Maybe instance containing the specified value.
