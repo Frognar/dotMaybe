@@ -1,7 +1,3 @@
-using DotMaybe;
-using FluentAssertions;
-using FsCheck.Xunit;
-
 namespace dotMaybe.Tests.Unit;
 
 public class MaybeMatchingTests

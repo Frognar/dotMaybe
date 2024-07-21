@@ -1,8 +1,4 @@
-﻿using DotMaybe;
-using FluentAssertions;
-using FsCheck.Xunit;
-
-namespace dotMaybe.Tests.Unit;
+﻿namespace dotMaybe.Tests.Unit;
 
 public class MaybeEqualityTests
 {
