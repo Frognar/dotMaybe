@@ -1,7 +1,7 @@
-Contribution to dotResult
+Contribution to dotMaybe
 =====================
 
-You can contribute to dotResult with issues and PRs. Simply filing issues for problems you encounter is a great way to contribute. Contributing implementations is greatly appreciated.
+You can contribute to dotMaybe with issues and PRs. Simply filing issues for problems you encounter is a great way to contribute. Contributing implementations is greatly appreciated.
 
 ## How to Contribute
 1. **Fork the repository:** Click the "Fork" button at the top right of the repository page. This will create your copy of the project.
