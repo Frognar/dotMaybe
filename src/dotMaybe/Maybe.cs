@@ -12,7 +12,7 @@ namespace DotMaybe;
 /// It encapsulates the concept of an optional value, providing a safe way to represent and
 /// manipulate data that may or may not exist.
 /// </remarks>
-public readonly record struct Maybe<T>
+public readonly partial record struct Maybe<T>
 {
     private readonly IMaybe _maybe;
 
@@ -20,11 +20,6 @@ public readonly record struct Maybe<T>
     {
         _maybe = maybe;
     }
-
-    /// <summary>
-    /// Marker interface for a maybe type.
-    /// </summary>
-    private interface IMaybe;
 
     /// <summary>
     /// Applies one of two functions based on whether the Maybe instance has a value or not.
@@ -117,11 +112,4 @@ public readonly record struct Maybe<T>
     /// </summary>
     /// <returns>An empty Maybe instance of type T.</returns>
     public static Maybe<T> None() => new(default(NoneType));
-
-    private readonly record struct SomeType(T Value) : IMaybe
-    {
-        public T Value { get; } = Value;
-    }
-
-    private readonly record struct NoneType : IMaybe;
 }
