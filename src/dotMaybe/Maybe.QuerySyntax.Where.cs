@@ -29,11 +29,6 @@ public readonly partial record struct Maybe<T>
     /// </example>
     public Maybe<T> Where(Func<T, bool> predicate)
     {
-        return _maybe switch
-        {
-            NoneType => this,
-            SomeType some when predicate(some.Value) => this,
-            _ => None(),
-        };
+        return Filter(predicate);
     }
 }
