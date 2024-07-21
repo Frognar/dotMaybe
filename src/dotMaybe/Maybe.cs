@@ -19,6 +19,16 @@ public readonly partial record struct Maybe<T>
     }
 
     /// <summary>
+    /// Gets a value indicating whether this Maybe instance contains a value.
+    /// </summary>
+    public bool IsSome => _maybe is SomeType;
+
+    /// <summary>
+    /// Gets a value indicating whether this Maybe instance is empty.
+    /// </summary>
+    public bool IsNone => _maybe is NoneType;
+
+    /// <summary>
     /// Creates a Maybe instance containing the specified value.
     /// </summary>
     /// <param name="value">The value to be wrapped in a Maybe instance.</param>
