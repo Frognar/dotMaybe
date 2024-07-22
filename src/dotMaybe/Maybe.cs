@@ -33,6 +33,13 @@ public readonly partial record struct Maybe<T>
     /// </summary>
     /// <param name="value">The value to be wrapped in a Maybe instance.</param>
     /// <returns>A Maybe instance containing the specified value.</returns>
+    public static implicit operator Maybe<T>(T? value) => value is not null ? Some(value) : None();
+
+    /// <summary>
+    /// Creates a Maybe instance containing the specified value.
+    /// </summary>
+    /// <param name="value">The value to be wrapped in a Maybe instance.</param>
+    /// <returns>A Maybe instance containing the specified value.</returns>
     public static Maybe<T> Some(T value) => new(new SomeType(value));
 
     /// <summary>
@@ -40,4 +47,38 @@ public readonly partial record struct Maybe<T>
     /// </summary>
     /// <returns>An empty Maybe instance of type T.</returns>
     public static Maybe<T> None() => new(default(NoneType));
+}
+
+/// <summary>
+/// Provides static methods for working with Maybe types.
+/// </summary>
+public static class Maybe
+{
+    /// <summary>
+    /// Converts a nullable reference type to a Maybe instance.
+    /// </summary>
+    /// <typeparam name="T">The type of the value, which must be a reference type.</typeparam>
+    /// <param name="value">The nullable value to convert.</param>
+    /// <returns>
+    /// A Maybe instance containing the value if it's not null; otherwise, returns an empty Maybe.
+    /// </returns>
+    public static Maybe<T> ToMaybe<T>(this T? value)
+        where T : class
+    {
+        return value is null ? Maybe<T>.None() : Maybe<T>.Some(value);
+    }
+
+    /// <summary>
+    /// Converts a nullable value type to a Maybe instance.
+    /// </summary>
+    /// <typeparam name="T">The type of the value, which must be a value type.</typeparam>
+    /// <param name="value">The nullable value to convert.</param>
+    /// <returns>
+    /// A Maybe instance containing the value if it has a value; otherwise, returns an empty Maybe.
+    /// </returns>
+    public static Maybe<T> ToMaybe<T>(this T? value)
+        where T : struct
+    {
+        return value.HasValue ? Maybe<T>.Some(value.Value) : Maybe<T>.None();
+    }
 }
