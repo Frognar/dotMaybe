@@ -1,4 +1,6 @@
-﻿namespace DotMaybe;
+﻿using System;
+
+namespace DotMaybe;
 
 /// <summary>
 /// Represents an optional value of type T.
@@ -80,5 +82,33 @@ public static class Maybe
         where T : struct
     {
         return value.HasValue ? Maybe<T>.Some(value.Value) : Maybe<T>.None();
+    }
+
+    /// <summary>
+    /// Combines two Maybe instances using a mapping function.
+    /// </summary>
+    /// <typeparam name="T1">The type of the value in the first Maybe.</typeparam>
+    /// <typeparam name="T2">The type of the value in the second Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="maybe1">The first Maybe instance.</param>
+    /// <param name="maybe2">The second Maybe instance.</param>
+    /// <param name="map">A function that combines the values from both Maybes if they exist.</param>
+    /// <returns>
+    /// A new Maybe instance containing the result of applying the map function to the values of both input Maybes
+    /// if both contain values; otherwise, returns an empty Maybe.
+    /// </returns>
+    /// <remarks>
+    /// This method is useful for combining two independent Maybe values into a single result.
+    /// If either of the input Maybes is empty, the result will be an empty Maybe.
+    /// </remarks>
+    public static Maybe<TResult> Map2<T1, T2, TResult>(
+        Maybe<T1> maybe1,
+        Maybe<T2> maybe2,
+        Func<T1, T2, TResult> map)
+    {
+        return
+            from v1 in maybe1
+            from v2 in maybe2
+            select map(v1, v2);
     }
 }
