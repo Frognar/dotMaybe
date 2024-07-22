@@ -55,15 +55,20 @@ public readonly partial record struct Maybe<T>
 public static class Maybe
 {
     /// <summary>
-    /// Converts a nullable reference type to a Maybe instance.
+    /// Converts a value to a Maybe instance.
     /// </summary>
-    /// <typeparam name="T">The type of the value, which must be a reference type.</typeparam>
-    /// <param name="value">The nullable value to convert.</param>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to convert to a Maybe instance.</param>
     /// <returns>
     /// A Maybe instance containing the value if it's not null; otherwise, returns an empty Maybe.
     /// </returns>
-    public static Maybe<T> ToMaybe<T>(this T? value)
-        where T : class
+    /// <remarks>
+    /// This method provides a convenient way to create a Maybe instance from any value,
+    /// handling both reference types and value types.
+    /// For reference types, it returns None if the value is null.
+    /// For value types, it always returns a Some instance, as value types cannot be null.
+    /// </remarks>
+    public static Maybe<T> ToMaybe<T>(this T value)
     {
         return value is null ? Maybe<T>.None() : Maybe<T>.Some(value);
     }
