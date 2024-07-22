@@ -41,6 +41,15 @@ public class MaybeCreationTests
     [Property]
     public void ToMaybe_FromValueType_ShouldBeSome(int value)
     {
+        value
+            .ToMaybe()
+            .Should()
+            .Be(Some.With(value));
+    }
+
+    [Property]
+    public void ToMaybe_FromNullableValue_ShouldBeSome(int value)
+    {
         ((int?)value)
             .ToMaybe()
             .Should()
@@ -48,7 +57,7 @@ public class MaybeCreationTests
     }
 
     [Fact]
-    public void ToMaybe_FromValueTypeNull_ShouldBeNone()
+    public void ToMaybe_FromNullableNull_ShouldBeNone()
     {
         ((int?)null)
             .ToMaybe()
