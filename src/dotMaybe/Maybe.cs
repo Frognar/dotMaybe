@@ -90,6 +90,22 @@ public static class Maybe
     }
 
     /// <summary>
+    /// Flattens a nested Maybe, reducing Maybe&lt;Maybe&lt;T&gt;&gt; to Maybe&lt;T&gt;.
+    /// </summary>
+    /// <typeparam name="T">The type of the value contained in the innermost Maybe.</typeparam>
+    /// <param name="nested">The nested Maybe instance to flatten.</param>
+    /// <returns>A flattened Maybe&lt;T&gt; instance.</returns>
+    /// <remarks>
+    /// This method uses the Bind operation to flatten the nested structure.
+    /// If the outer Maybe is None, the result will be None.
+    /// If the outer Maybe is Some, the result will be the inner Maybe.
+    /// </remarks>
+    public static Maybe<T> Flatten<T>(this Maybe<Maybe<T>> nested)
+    {
+        return nested.Bind(v => v);
+    }
+
+    /// <summary>
     /// Combines two Maybe instances using a mapping function.
     /// </summary>
     /// <typeparam name="T1">The type of the value in the first Maybe.</typeparam>
