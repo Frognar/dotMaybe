@@ -23,6 +23,7 @@
     <PackageTags>maybe monad functional functional-programming optional nullable null-safety error-handling value-object typesafety query-syntax async c# dotnet-standard library</PackageTags>
     <PackageReleaseNotes>
       - add Flatten method (Maybe of Maybe of T -> Maybe of T)
+      - add Fold method
     </PackageReleaseNotes>
   </PropertyGroup>
 
