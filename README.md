@@ -186,7 +186,7 @@ Example:
 ```csharp
 var maybe = Some.With(42);
 var filteredMaybe = maybe.Filter(value => value < 50);
-Console.WriteLine(boundMaybe.Match(
+Console.WriteLine(filteredMaybe.Match(
     () => "Empty",
     value => "Value: " + value)); // Outputs: Value: 42
 ```
@@ -194,7 +194,7 @@ Console.WriteLine(boundMaybe.Match(
 ```csharp
 var maybe = Some.With(52);
 var filteredMaybe = maybe.Filter(value => value < 50);
-Console.WriteLine(boundMaybe.Match(
+Console.WriteLine(filteredMaybe.Match(
     () => "Empty",
     value => "Value: " + value)); // Outputs: Empty
 ```
@@ -202,7 +202,7 @@ Console.WriteLine(boundMaybe.Match(
 ```csharp
 var maybe = None.OfType<int>();
 var filteredMaybe = maybe.Filter(value => value < 50);
-Console.WriteLine(boundMaybe.Match(
+Console.WriteLine(filteredMaybe.Match(
     () => "Empty",
     value => "Value: " + value)); // Outputs: Empty
 ```
