@@ -11,7 +11,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>dotMaybe</PackageId>
     <Authors>Frognar</Authors>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Title>dotMaybe</Title>
     <Description>dotMaybe is a lightweight, intuitive implementation of the Maybe monad for .NET. It simplifies working with optional values, eliminating null reference exceptions and promoting a more functional, declarative programming style.</Description>
     <Copyright>Frognar 2024</Copyright>
