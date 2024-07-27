@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DotMaybe;
 
@@ -52,10 +53,28 @@ public readonly partial record struct Maybe<T>
 }
 
 /// <summary>
-/// Provides static methods for working with Maybe types.
+/// Provides extension methods for working with Maybe types.
 /// </summary>
-public static class Maybe
+public static class MaybeExtensions
 {
+    /// <summary>
+    /// Returns the first element of a sequence as a Maybe, or an empty Maybe if the sequence contains no elements.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the sequence.</typeparam>
+    /// <param name="source">The IEnumerable&lt;T&gt; to return the first element from.</param>
+    /// <returns>
+    /// A Maybe&lt;T&gt; containing the first element of the sequence if it exists;
+    /// otherwise, returns an empty Maybe.
+    /// </returns>
+    /// <remarks>
+    /// This method is similar to FirstOrDefault(), but wraps the result in a Maybe type.
+    /// It handles both null and non-null elements in the sequence.
+    /// </remarks>
+    public static Maybe<T> FirstOrNone<T>(this IEnumerable<T> source)
+    {
+        return source.Select(Some.With).DefaultIfEmpty(None.OfType<T>()).First();
+    }
+
     /// <summary>
     /// Converts a value to a Maybe instance.
     /// </summary>
@@ -103,65 +122,5 @@ public static class Maybe
     public static Maybe<T> Flatten<T>(this Maybe<Maybe<T>> nested)
     {
         return nested.Bind(v => v);
-    }
-
-    /// <summary>
-    /// Combines two Maybe instances using a mapping function.
-    /// </summary>
-    /// <typeparam name="T1">The type of the value in the first Maybe.</typeparam>
-    /// <typeparam name="T2">The type of the value in the second Maybe.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="maybe1">The first Maybe instance.</param>
-    /// <param name="maybe2">The second Maybe instance.</param>
-    /// <param name="map">A function that combines the values from both Maybes if they exist.</param>
-    /// <returns>
-    /// A new Maybe instance containing the result of applying the map function to the values of both input Maybes
-    /// if both contain values; otherwise, returns an empty Maybe.
-    /// </returns>
-    /// <remarks>
-    /// This method is useful for combining two independent Maybe values into a single result.
-    /// If either of the input Maybes is empty, the result will be an empty Maybe.
-    /// </remarks>
-    public static Maybe<TResult> Map2<T1, T2, TResult>(
-        Maybe<T1> maybe1,
-        Maybe<T2> maybe2,
-        Func<T1, T2, TResult> map)
-    {
-        return
-            from v1 in maybe1
-            from v2 in maybe2
-            select map(v1, v2);
-    }
-
-    /// <summary>
-    /// Combines three Maybe instances using a mapping function.
-    /// </summary>
-    /// <typeparam name="T1">The type of the value in the first Maybe.</typeparam>
-    /// <typeparam name="T2">The type of the value in the second Maybe.</typeparam>
-    /// <typeparam name="T3">The type of the value in the third Maybe.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="maybe1">The first Maybe instance.</param>
-    /// <param name="maybe2">The second Maybe instance.</param>
-    /// <param name="maybe3">The third Maybe instance.</param>
-    /// <param name="map">A function that combines the values from all three Maybes if they exist.</param>
-    /// <returns>
-    /// A new Maybe instance containing the result of applying the map function to the values of all three input Maybes
-    /// if all contain values; otherwise, returns an empty Maybe.
-    /// </returns>
-    /// <remarks>
-    /// This method is useful for combining three independent Maybe values into a single result.
-    /// If any of the input Maybes is empty, the result will be an empty Maybe.
-    /// </remarks>
-    public static Maybe<TResult> Map3<T1, T2, T3, TResult>(
-        Maybe<T1> maybe1,
-        Maybe<T2> maybe2,
-        Maybe<T3> maybe3,
-        Func<T1, T2, T3, TResult> map)
-    {
-        return
-            from v1 in maybe1
-            from v2 in maybe2
-            from v3 in maybe3
-            select map(v1, v2, v3);
     }
 }
