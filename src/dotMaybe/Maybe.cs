@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DotMaybe;
@@ -73,6 +74,26 @@ public static class MaybeExtensions
     public static Maybe<T> FirstOrNone<T>(this IEnumerable<T> source)
     {
         return source.Select(Some.With).DefaultIfEmpty(None.OfType<T>()).First();
+    }
+
+    /// <summary>
+    /// Returns the first element of a sequence that satisfies a specified condition as a Maybe,
+    /// or an empty Maybe if no such element is found.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the sequence.</typeparam>
+    /// <param name="source">The IEnumerable&lt;T&gt; to return the first element from.</param>
+    /// <param name="predicate">A function to test each element for a condition.</param>
+    /// <returns>
+    /// A Maybe&lt;T&gt; containing the first element in the sequence that satisfies the condition if it exists;
+    /// otherwise, returns an empty Maybe.
+    /// </returns>
+    /// <remarks>
+    /// This method is similar to FirstOrDefault(predicate), but wraps the result in a Maybe type.
+    /// It handles both null and non-null elements in the sequence.
+    /// </remarks>
+    public static Maybe<T> FirstOrNone<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    {
+        return source.Where(predicate).Select(Some.With).DefaultIfEmpty(None.OfType<T>()).First();
     }
 
     /// <summary>
