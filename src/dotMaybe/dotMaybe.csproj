@@ -27,6 +27,7 @@
       - Add MapAsync method
       - Add MapAsync methods for Task of Maybe of T
       - Add ConfigureAwait for async calls
+      - Add BindAsync method
     </PackageReleaseNotes>
   </PropertyGroup>
 
