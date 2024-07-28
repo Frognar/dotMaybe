@@ -176,7 +176,7 @@ Console.WriteLine(foldedResult); // Outputs: 52
 #### Filter
 
 ```csharp
-public public Maybe<T> Filter(Func<T, bool> predicate)
+public public Maybe<T> Filter(Predicate<T> predicate)
 ```
 
 Applies a predicate to the value in Maybe<T>, returning None if the predicate fails or the value doesn't exist.

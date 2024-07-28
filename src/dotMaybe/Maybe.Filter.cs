@@ -12,7 +12,7 @@ public readonly partial record struct Maybe<T>
     /// The original Maybe if it contains a value that satisfies the predicate;
     /// otherwise, returns an empty Maybe.
     /// </returns>
-    public Maybe<T> Filter(Func<T, bool> predicate)
+    public Maybe<T> Filter(Predicate<T> predicate)
     {
         return _maybe switch
         {
