@@ -529,22 +529,137 @@ Console.WriteLine(message); // outputs: EMPTY
 
 ## Query syntax
 
-```csharp
-// Execute function if all maybes contain value
-Maybe<int> finalSomeMaybe =
-    from v1 in someMaybe
-    from v2 in Some.With("Hello, World!")
-    from v3 in Some.With("Hello, World!")
-    let v4 = "Hello, World!"
-    select v1.Length + v2.Length + v3.Length + v4.Length; // Maybe<int> of 52
+#### Select
 
-// Returns None when any Maybe don't contain value
-Result<int> finalNoneMaybe =
-    from v1 in noneMaybe
-    from v2 in Some.With("Hello, World!")
+```csharp
+public Maybe<TResult> Select<TResult>(Func<T, TResult> selector)
+```
+
+Transforms the value inside a Maybe<T> using the provided mapping function, if a value exists.
+
+Example:
+
+```csharp
+Maybe<string> mappedMaybe =
+    from x in Some.With(42)
+    select x.ToString();
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 42
+```
+
+```csharp
+Maybe<string> mappedMaybe =
+    from x in None.OfType<int>
+    select x.ToString();
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
+#### SelectMany
+
+```csharp
+public Maybe<TResult> SelectMany<TIntermediate, TResult>(
+        Func<T, Maybe<TIntermediate>> intermediateSelector,
+        Func<T, TIntermediate, TResult> resultSelector)
+```
+
+Projects the value of a Maybe into a new Maybe, then flattens the result into a single Maybe.
+
+Example:
+
+```csharp
+Maybe<string> boundMaybe =
+    from v1 in Some.With(1)
+    from v2 in Some.With("abcd")
+    from v3 in Some.With("Hello there!")
+    select $"{v1} ({v2}): {v3}";
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 1 (abcd): Hello there!
+```
+
+```csharp
+Maybe<string> boundMaybe =
+    from v1 in None.OfType<int>()
+    from v2 in Some.With("abcd")
+    from v3 in Some.With("Hello there!")
+    select $"{v1} ({v2}): {v3}";
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
+```csharp
+Maybe<string> boundMaybe =
+    from v1 in Some.With(1)
+    from v2 in Some.With("abcd")
     from v3 in None.OfType<string>()
-    let v4 = "Hello, World!"
-    select v1.Length + v2.Length + v3.Length + v4.Length; // Maybe<int> of none
+    select $"{v1} ({v2}): {v3}";
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
+```csharp
+Maybe<string> boundMaybe =
+    from v1 in Some.With(1)
+    from v2 in None.OfType<string>()
+    from v3 in Some.With("Hello there!")
+    select $"{v1} ({v2}): {v3}";
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
+#### Where
+
+```csharp
+public Maybe<T> Where(Predicate<T> predicate)
+```
+
+Applies a predicate to the value in Maybe<T>, returning None if the predicate fails or the value doesn't exist.
+
+Example:
+
+```csharp
+Maybe<int> filteredMaybe =
+    from x in Some.With(42)
+    where x > 40
+    select x;
+
+Console.WriteLine(filteredMaybe.Match(
+    () => "Empty",
+    value => value.ToString())); // Outputs: 42
+```
+
+```csharp
+Maybe<int> filteredMaybe =
+    from x in Some.With(42)
+    where x < 40
+    select x; // None
+
+Console.WriteLine(filteredMaybe.Match(
+    () => "Empty",
+    value => value.ToString())); // Outputs: Empty
+```
+
+```csharp
+Maybe<int> filteredMaybe =
+    from x in None.OfType<int>()
+    where x < 40
+    select x; // None
+
+Console.WriteLine(filteredMaybe.Match(
+    () => "Empty",
+    value => value.ToString())); // Outputs: Empty
 ```
 
 ---
