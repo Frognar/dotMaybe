@@ -27,7 +27,7 @@ public readonly partial record struct Maybe<T>
     ///                   select x;
     /// // emptyResult is Maybe&lt;int&gt;.None().
     /// </example>
-    public Maybe<T> Where(Func<T, bool> predicate)
+    public Maybe<T> Where(Predicate<T> predicate)
     {
         return Filter(predicate);
     }
