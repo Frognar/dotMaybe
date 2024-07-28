@@ -11,7 +11,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>dotMaybe</PackageId>
     <Authors>Frognar</Authors>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Title>dotMaybe</Title>
     <Description>dotMaybe is a lightweight, intuitive implementation of the Maybe monad for .NET. It simplifies working with optional values, eliminating null reference exceptions and promoting a more functional, declarative programming style.</Description>
     <Copyright>Frognar 2024</Copyright>
@@ -29,6 +29,7 @@
       - Add ConfigureAwait for async calls
       - Add BindAsync method
       - Add BindAsync method for Task of Maybe of T
+      - Func of T and bool to Predicate of T where possible
     </PackageReleaseNotes>
   </PropertyGroup>
 
