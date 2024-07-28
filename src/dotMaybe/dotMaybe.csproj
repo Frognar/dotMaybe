@@ -25,6 +25,8 @@
       - Add FirstOrNone extension method for IEnumerable of T
       - Add FirstOrNone with predicate extension method for IEnumerable of T
       - Add MapAsync method
+      - Add MapAsync methods for Task of Maybe of T
+      - Add ConfigureAwait for async calls
     </PackageReleaseNotes>
   </PropertyGroup>
 
