@@ -97,6 +97,6 @@ public static partial class MaybeExtensions
         Func<T, Task<TResult>> map)
     {
         var maybe = await source.ConfigureAwait(false);
-        return await maybe.MapAsync(map);
+        return await maybe.MapAsync(map).ConfigureAwait(false);
     }
 }
