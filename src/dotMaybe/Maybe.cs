@@ -56,7 +56,7 @@ public readonly partial record struct Maybe<T>
 /// <summary>
 /// Provides extension methods for working with Maybe types.
 /// </summary>
-public static class MaybeExtensions
+public static partial class MaybeExtensions
 {
     /// <summary>
     /// Returns the first element of a sequence as a Maybe, or an empty Maybe if the sequence contains no elements.

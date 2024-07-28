@@ -46,3 +46,57 @@ public readonly partial record struct Maybe<T>
             .ConfigureAwait(false);
     }
 }
+
+/// <summary>
+/// Provides extension methods for working with Maybe types in asynchronous contexts.
+/// </summary>
+public static partial class MaybeExtensions
+{
+    /// <summary>
+    /// Asynchronously applies a synchronous transform to a Maybe wrapped in a Task.
+    /// </summary>
+    /// <typeparam name="T">The type of the value in the source Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the value in the resulting Maybe.</typeparam>
+    /// <param name="source">A Task containing a Maybe to transform.</param>
+    /// <param name="map">A function to apply to the value if it exists.</param>
+    /// <returns>
+    /// A Task that represents the asynchronous operation.
+    /// The task result is a new Maybe instance
+    /// containing the transformed value if the original Maybe had a value;
+    /// otherwise, it's an empty Maybe of the new type.
+    /// </returns>
+    /// <remarks>
+    /// This method allows for chaining transformations on Maybe instances within asynchronous workflows.
+    /// </remarks>
+    public static async Task<Maybe<TResult>> MapAsync<T, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, TResult> map)
+    {
+        var maybe = await source.ConfigureAwait(false);
+        return maybe.Map(map);
+    }
+
+    /// <summary>
+    /// Asynchronously applies an asynchronous transform to a Maybe wrapped in a Task.
+    /// </summary>
+    /// <typeparam name="T">The type of the value in the source Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the value in the resulting Maybe.</typeparam>
+    /// <param name="source">A Task containing a Maybe to transform.</param>
+    /// <param name="map">An asynchronous function to apply to the value if it exists.</param>
+    /// <returns>
+    /// A Task that represents the asynchronous operation.
+    /// The task result is a new Maybe instance
+    /// containing the transformed value if the original Maybe had a value;
+    /// otherwise, it's an empty Maybe of the new type.
+    /// </returns>
+    /// <remarks>
+    /// This method allows for chaining asynchronous transformations on Maybe instances within asynchronous workflows.
+    /// </remarks>
+    public static async Task<Maybe<TResult>> MapAsync<T, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, Task<TResult>> map)
+    {
+        var maybe = await source.ConfigureAwait(false);
+        return await maybe.MapAsync(map);
+    }
+}
