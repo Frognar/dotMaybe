@@ -17,7 +17,7 @@ public static class Maybe
     /// <param name="maybe2">The second Maybe instance.</param>
     /// <param name="map">A function that combines the values from both Maybes if they exist.</param>
     /// <returns>
-    /// A new Maybe instance containing the result of applying the map function to the values of both input Maybes
+    /// A new Maybe instance containing the result of applying the map function to the values of both inputs Maybes
     /// if both contain values; otherwise, returns an empty Maybe.
     /// </returns>
     /// <remarks>
