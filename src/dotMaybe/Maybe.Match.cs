@@ -42,8 +42,8 @@ public readonly partial record struct Maybe<T>
     {
         return _maybe switch
         {
-            SomeType s => await some(s.Value),
-            _ => await none(),
+            SomeType s => await some(s.Value).ConfigureAwait(false),
+            _ => await none().ConfigureAwait(false),
         };
     }
 
@@ -61,7 +61,7 @@ public readonly partial record struct Maybe<T>
     {
         return _maybe switch
         {
-            SomeType s => await some(s.Value),
+            SomeType s => await some(s.Value).ConfigureAwait(false),
             _ => none(),
         };
     }
