@@ -21,6 +21,24 @@ public class MaybeMappingTests
     }
 
     [Property]
+    public async Task MapAsync_WhenSome_TransformsValueAsynchronously(int value)
+    {
+        (await Some.With(value)
+                .MapAsync(async v => await Task.FromResult(v.ToString())))
+            .Should()
+            .Be(Some.With(value.ToString()));
+    }
+
+    [Fact]
+    public async Task MapAsync_WhenNone_ReturnsNone()
+    {
+        (await None.OfType<int>()
+                .MapAsync(v => Task.FromResult(v.ToString())))
+            .Should()
+            .Be(None.OfType<string>());
+    }
+
+    [Property]
     public void Map2_WhenBothSome_ReturnsSome(int value, decimal otherValue)
     {
         Maybe.Map2(
