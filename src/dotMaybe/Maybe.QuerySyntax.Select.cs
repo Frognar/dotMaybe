@@ -52,3 +52,36 @@ public readonly partial record struct Maybe<T>
         return await MapAsync(selector);
     }
 }
+
+/// <summary>
+/// Provides extension methods for working with Maybe types in asynchronous contexts.
+/// </summary>
+public static partial class MaybeExtensions
+{
+    /// <summary>
+    /// Asynchronously projects the value of a Maybe wrapped in a Task into a new form if it exists.
+    /// </summary>
+    /// <typeparam name="T">The type of the value in the source Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the value in the resulting Maybe.</typeparam>
+    /// <param name="source">A Task containing a Maybe to transform.</param>
+    /// <param name="selector">A transform function to apply to the value if it exists.</param>
+    /// <returns>
+    /// A Task that represents the asynchronous operation. The task result is a new Maybe instance
+    /// containing the transformed value if the original Maybe had a value;
+    /// otherwise, it's an empty Maybe of the new type.
+    /// </returns>
+    /// <remarks>
+    /// This method enables LINQ query syntax for Maybe types wrapped in Tasks.
+    /// It is equivalent to the MapAsync method and allows for chaining transformations in asynchronous workflows.
+    /// </remarks>
+    /// <example>
+    /// Task&lt;Maybe&lt;int&gt;&gt; maybeIntTask = FetchMaybeIntAsync();
+    /// var result = await (from x in maybeIntTask
+    ///                     select x * 2);
+    /// // result is Maybe&lt;int&gt; containing the doubled value if original Maybe had a value.
+    /// </example>
+    public static async Task<Maybe<TResult>> Select<T, TResult>(this Task<Maybe<T>> source, Func<T, TResult> selector)
+    {
+        return await source.MapAsync(selector);
+    }
+}
