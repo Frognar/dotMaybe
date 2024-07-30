@@ -55,4 +55,22 @@ public class MaybeQuerySyntaxSelectTests
             .Should()
             .Be(None.OfType<string>());
     }
+
+    [Property]
+    public async Task Select_WhenTaskSomeAsyncMap_TransformsValue(int value)
+    {
+        (await (from x in Task.FromResult(Some.With(value))
+                select Task.FromResult(x.ToString())))
+            .Should()
+            .Be(Some.With(value.ToString()));
+    }
+
+    [Fact]
+    public async Task Select_WhenTaskNoneAsyncMap_ReturnsNone()
+    {
+        (await (from x in Task.FromResult(None.OfType<int>())
+                select Task.FromResult(x.ToString())))
+            .Should()
+            .Be(None.OfType<string>());
+    }
 }
