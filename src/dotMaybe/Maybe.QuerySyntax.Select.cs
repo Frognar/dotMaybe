@@ -49,7 +49,7 @@ public readonly partial record struct Maybe<T>
     /// </example>
     public async Task<Maybe<TResult>> Select<TResult>(Func<T, Task<TResult>> selector)
     {
-        return await MapAsync(selector);
+        return await MapAsync(selector).ConfigureAwait(false);
     }
 }
 
@@ -82,6 +82,6 @@ public static partial class MaybeExtensions
     /// </example>
     public static async Task<Maybe<TResult>> Select<T, TResult>(this Task<Maybe<T>> source, Func<T, TResult> selector)
     {
-        return await source.MapAsync(selector);
+        return await source.MapAsync(selector).ConfigureAwait(false);
     }
 }
