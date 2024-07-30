@@ -559,6 +559,96 @@ Console.WriteLine(mappedMaybe.Match(
     value => value)); // Outputs: Empty
 ```
 
+#### Select
+
+```csharp
+public Task<Maybe<TResult>> Select<TResult>(Func<T, Task<TResult>> selector)
+```
+
+Asynchronously transforms the value inside a Maybe<T> using the provided asynchronous mapping function, if a value exists.
+
+Example:
+
+```csharp
+Maybe<string> mappedMaybe = await (
+    from x in Some.With(42)
+    select Task.FromResult(x.ToString()));
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 42
+```
+
+```csharp
+Maybe<string> mappedMaybe = await (
+    from x in None.OfType<int>
+    select Task.FromResult(x.ToString()));
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
+#### Select
+
+```csharp
+public static Task<Maybe<TResult>> Select<T, TResult>(this Task<Maybe<T>> source, Func<T, Task<TResult>> selector)
+```
+
+Asynchronously transforms the value inside a Maybe<T> wrapped in a Task using the provided asynchronous mapping function, if a value exists.
+
+Example:
+
+```csharp
+Maybe<string> mappedMaybe = await (
+    from x in Task.FromResult(Some.With(42))
+    select Task.FromResult(x.ToString()));
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 42
+```
+
+```csharp
+Maybe<string> mappedMaybe = await (
+    from x in Task.FromResult(None.OfType<int>)
+    select Task.FromResult(x.ToString()));
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
+#### Select
+
+```csharp
+public static Task<Maybe<TResult>> Select<T, TResult>(this Task<Maybe<T>> source, Func<T, TResult> selector)
+```
+
+Asynchronously transforms the value inside a Maybe<T> wrapped in a Task using the provided mapping function, if a value exists.
+
+Example:
+
+```csharp
+Maybe<string> mappedMaybe = await (
+    from x in Task.FromResult(Some.With(42))
+    select x.ToString());
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 42
+```
+
+```csharp
+Maybe<string> mappedMaybe = await (
+    from x in Task.FromResult(None.OfType<int>)
+    select x.ToString());
+
+Console.WriteLine(mappedMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: Empty
+```
+
 #### SelectMany
 
 ```csharp
