@@ -58,4 +58,32 @@ public readonly partial record struct Maybe<T>
                 .MapAsync(async v2 => await resultSelector(v1, v2).ConfigureAwait(false)))
             .ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Projects and flattens a Maybe value using an asynchronous intermediate selector and a synchronous result selector.
+    /// </summary>
+    /// <typeparam name="TIntermediate">The type of the intermediate Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the final result.</typeparam>
+    /// <param name="intermediateSelector">An asynchronous function that returns a Maybe of an intermediate value.</param>
+    /// <param name="resultSelector">A function that combines the source value and intermediate value into a result.</param>
+    /// <returns>A Task representing the asynchronous operation, containing a Maybe of the final result.</returns>
+    /// <remarks>
+    /// This method enables complex LINQ query syntax for Maybe types in asynchronous contexts.
+    /// It allows for chaining of Maybe-producing operations and flattening of nested Maybes.
+    /// The method uses ConfigureAwait(false) to avoid forcing continuations back to the original context.
+    /// </remarks>
+    /// <example>
+    /// var result = await (from x in maybeInt
+    ///                     from y in GetMaybeStringAsync(x)
+    ///                     select CombineValues(x, y));
+    /// // Where GetMaybeStringAsync returns Task&lt;Maybe&lt;string&gt;&gt; and CombineValues is synchronous.
+    /// </example>
+    public async Task<Maybe<TResult>> SelectMany<TIntermediate, TResult>(
+        Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
+        Func<T, TIntermediate, TResult> resultSelector)
+    {
+        return await BindAsync(async v1 => (await intermediateSelector(v1).ConfigureAwait(false))
+                .Map(v2 => resultSelector(v1, v2)))
+            .ConfigureAwait(false);
+    }
 }
