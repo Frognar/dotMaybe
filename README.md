@@ -664,33 +664,19 @@ Example:
 ```csharp
 Maybe<string> boundMaybe =
     from v1 in Some.With(1)
-    from v2 in Some.With("abcd")
-    from v3 in Some.With("Hello there!")
-    select $"{v1} ({v2}): {v3}";
+    from v2 in Some.With("Hello there!")
+    select $"{v1}: {v2}";
 
 Console.WriteLine(boundMaybe.Match(
     () => "Empty",
-    value => value)); // Outputs: 1 (abcd): Hello there!
+    value => value)); // Outputs: 1: Hello there!
 ```
 
 ```csharp
 Maybe<string> boundMaybe =
     from v1 in None.OfType<int>()
-    from v2 in Some.With("abcd")
-    from v3 in Some.With("Hello there!")
-    select $"{v1} ({v2}): {v3}";
-
-Console.WriteLine(boundMaybe.Match(
-    () => "Empty",
-    value => value)); // Outputs: Empty
-```
-
-```csharp
-Maybe<string> boundMaybe =
-    from v1 in Some.With(1)
-    from v2 in Some.With("abcd")
-    from v3 in None.OfType<string>()
-    select $"{v1} ({v2}): {v3}";
+    from v2 in Some.With("Hello there!")
+    select $"{v1}: {v2}";
 
 Console.WriteLine(boundMaybe.Match(
     () => "Empty",
@@ -701,8 +687,7 @@ Console.WriteLine(boundMaybe.Match(
 Maybe<string> boundMaybe =
     from v1 in Some.With(1)
     from v2 in None.OfType<string>()
-    from v3 in Some.With("Hello there!")
-    select $"{v1} ({v2}): {v3}";
+    select $"{v1}: {v2}";
 
 Console.WriteLine(boundMaybe.Match(
     () => "Empty",
@@ -724,13 +709,58 @@ Example:
 ```csharp
 Maybe<string> boundMaybe = await (
     from v1 in Some.With(1)
-    from v2 in Some.With("abcd")
-    from v3 in Some.With("Hello there!")
-    select Task.FromResult($"{v1} ({v2}): {v3}"));
+    from v2 in Some.With("Hello there!")
+    select Task.FromResult($"{v1}: {v2}"));
 
 Console.WriteLine(boundMaybe.Match(
     () => "Empty",
-    value => value)); // Outputs: 1 (abcd): Hello there!
+    value => value)); // Outputs: 1: Hello there!
+```
+
+#### SelectMany
+
+```csharp
+public Task<Maybe<TResult>> SelectMany<TIntermediate, TResult>(
+        Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
+        Func<T, TIntermediate, TResult> resultSelector)
+```
+
+Projects the value of a Maybe into a new Maybe, then flattens the result into a single Maybe.
+
+Example:
+
+```csharp
+Maybe<string> boundMaybe = await (
+    from v1 in Some.With(1)
+    from v2 in Task.FromResult(Some.With("Hello there!"))
+    select $"{v1}: {v2}");
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 1: Hello there!
+```
+
+#### SelectMany
+
+```csharp
+public Task<Maybe<TResult>> SelectMany<TIntermediate, TResult>(
+        Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
+        Func<T, TIntermediate, Task<TResult>> resultSelector)
+```
+
+Projects the value of a Maybe into a new Maybe, then flattens the result into a single Maybe.
+
+Example:
+
+```csharp
+Maybe<string> boundMaybe = await (
+    from v1 in Some.With(1)
+    from v2 in Task.FromResult(Some.With("Hello there!"))
+    select Task.FromResult($"{v1}: {v2}"));
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 1: Hello there!
 ```
 
 #### Where
