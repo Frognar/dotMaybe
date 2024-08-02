@@ -121,3 +121,138 @@ public readonly partial record struct Maybe<T>
             .ConfigureAwait(false)).ConfigureAwait(false);
     }
 }
+
+/// <summary>
+/// Provides extension methods for working with Maybe types in asynchronous contexts.
+/// </summary>
+public static partial class MaybeExtensions
+{
+    /// <summary>
+    /// Projects and flattens a Maybe value wrapped in a Task, using synchronous selectors.
+    /// </summary>
+    /// <typeparam name="T">The type of the source Maybe value.</typeparam>
+    /// <typeparam name="TIntermediate">The type of the intermediate Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the final result.</typeparam>
+    /// <param name="source">A Task containing the source Maybe to transform.</param>
+    /// <param name="intermediateSelector">A function that returns a Maybe of an intermediate value.</param>
+    /// <param name="resultSelector">A function that combines the source value and intermediate value into a result.</param>
+    /// <returns>
+    /// A Task representing the asynchronous operation, containing a Maybe of the final result.
+    /// </returns>
+    /// <remarks>
+    /// This method enables LINQ query syntax for Maybe types wrapped in Tasks.
+    /// It allows for chaining of Maybe-producing operations and flattening of nested Maybes in asynchronous contexts.
+    /// The method uses ConfigureAwait(false) to avoid forcing continuations back to the original context.
+    /// </remarks>
+    /// <example>
+    /// Task&lt;Maybe&lt;int&gt;&gt; maybeIntTask = FetchMaybeIntAsync();
+    /// var result = await (from x in maybeIntTask
+    ///                     from y in GetMaybeString(x)
+    ///                     select CombineValues(x, y));
+    /// // Where GetMaybeString and CombineValues are synchronous operations.
+    /// </example>
+    public static async Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, Maybe<TIntermediate>> intermediateSelector,
+        Func<T, TIntermediate, TResult> resultSelector)
+    {
+        return (await source.ConfigureAwait(false))
+            .SelectMany(intermediateSelector, resultSelector);
+    }
+
+    /// <summary>
+    /// Projects and flattens a Maybe value wrapped in a Task, using an asynchronous intermediate selector and a synchronous result selector.
+    /// </summary>
+    /// <typeparam name="T">The type of the source Maybe value.</typeparam>
+    /// <typeparam name="TIntermediate">The type of the intermediate Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the final result.</typeparam>
+    /// <param name="source">A Task containing the source Maybe to transform.</param>
+    /// <param name="intermediateSelector">An asynchronous function that returns a Maybe of an intermediate value.</param>
+    /// <param name="resultSelector">A synchronous function that combines the source value and intermediate value into a result.</param>
+    /// <returns>
+    /// A Task representing the asynchronous operation, containing a Maybe of the final result.
+    /// </returns>
+    /// <remarks>
+    /// This method enables LINQ query syntax for Maybe types wrapped in Tasks, allowing for complex asynchronous operations.
+    /// It uses ConfigureAwait(false) to avoid forcing continuations back to the original context, which is important for performance in asynchronous scenarios.
+    /// </remarks>
+    /// <example>
+    /// Task&lt;Maybe&lt;int&gt;&gt; maybeIntTask = FetchMaybeIntAsync();
+    /// var result = await (from x in maybeIntTask
+    ///                     from y in GetMaybeStringAsync(x)
+    ///                     select CombineValues(x, y));
+    /// // Where GetMaybeStringAsync is asynchronous and CombineValues is synchronous.
+    /// </example>
+    public static async Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
+        Func<T, TIntermediate, TResult> resultSelector)
+    {
+        return await (await source.ConfigureAwait(false))
+            .SelectMany(intermediateSelector, resultSelector).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Projects and flattens a Maybe value wrapped in a Task, using a synchronous intermediate selector and an asynchronous result selector.
+    /// </summary>
+    /// <typeparam name="T">The type of the source Maybe value.</typeparam>
+    /// <typeparam name="TIntermediate">The type of the intermediate Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the final result.</typeparam>
+    /// <param name="source">A Task containing the source Maybe to transform.</param>
+    /// <param name="intermediateSelector">A synchronous function that returns a Maybe of an intermediate value.</param>
+    /// <param name="resultSelector">An asynchronous function that combines the source value and intermediate value into a result.</param>
+    /// <returns>
+    /// A Task representing the asynchronous operation, containing a Maybe of the final result.
+    /// </returns>
+    /// <remarks>
+    /// This method enables LINQ query syntax for Maybe types wrapped in Tasks, allowing for complex asynchronous operations.
+    /// It uses ConfigureAwait(false) to avoid forcing continuations back to the original context, which is important for performance in asynchronous scenarios.
+    /// </remarks>
+    /// <example>
+    /// Task&lt;Maybe&lt;int&gt;&gt; maybeIntTask = FetchMaybeIntAsync();
+    /// var result = await (from x in maybeIntTask
+    ///                     from y in GetMaybeString(x)
+    ///                     select FetchDataAsync(x, y));
+    /// // Where GetMaybeString is synchronous and FetchDataAsync is asynchronous.
+    /// </example>
+    public static async Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, Maybe<TIntermediate>> intermediateSelector,
+        Func<T, TIntermediate, Task<TResult>> resultSelector)
+    {
+        return await (await source.ConfigureAwait(false))
+            .SelectMany(intermediateSelector, resultSelector).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Projects and flattens a Maybe value wrapped in a Task, using both asynchronous intermediate and result selectors.
+    /// </summary>
+    /// <typeparam name="T">The type of the source Maybe value.</typeparam>
+    /// <typeparam name="TIntermediate">The type of the intermediate Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the final result.</typeparam>
+    /// <param name="source">A Task containing the source Maybe to transform.</param>
+    /// <param name="intermediateSelector">An asynchronous function that returns a Maybe of an intermediate value.</param>
+    /// <param name="resultSelector">An asynchronous function that combines the source value and intermediate value into a result.</param>
+    /// <returns>
+    /// A Task representing the asynchronous operation, containing a Maybe of the final result.
+    /// </returns>
+    /// <remarks>
+    /// This method enables LINQ query syntax for Maybe types wrapped in Tasks, allowing for complex asynchronous operations.
+    /// It uses ConfigureAwait(false) to avoid forcing continuations back to the original context, which is important for performance in asynchronous scenarios.
+    /// </remarks>
+    /// <example>
+    /// Task&lt;Maybe&lt;int&gt;&gt; maybeIntTask = FetchMaybeIntAsync();
+    /// var result = await (from x in maybeIntTask
+    ///                     from y in GetMaybeStringAsync(x)
+    ///                     select FetchDataAsync(x, y));
+    /// // Where GetMaybeString and FetchDataAsync are asynchronous.
+    /// </example>
+    public static async Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
+        Func<T, TIntermediate, Task<TResult>> resultSelector)
+    {
+        return await (await source.ConfigureAwait(false))
+            .SelectMany(intermediateSelector, resultSelector).ConfigureAwait(false);
+    }
+}
