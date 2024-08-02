@@ -181,4 +181,34 @@ public class MaybeQuerySyntaxSelectManyTests
             .Should()
             .Be(None.OfType<int>());
     }
+
+    [Property]
+    public async Task SelectMany_WhenSomeFirstTaskAsyncResultSelector_TransformsValue(int value)
+    {
+        (await (from x in Task.FromResult(Some.With(value))
+                from y in Some.With(value)
+                select Task.FromResult(x + y)))
+            .Should()
+            .Be(Some.With(value + value));
+    }
+
+    [Property]
+    public async Task SelectMany_WhenFirstNoneFirstTaskAsyncResultSelector_ReturnsNone(int value)
+    {
+        (await (from x in Task.FromResult(None.OfType<int>())
+                from y in Some.With(value)
+                select Task.FromResult(x + y)))
+            .Should()
+            .Be(None.OfType<int>());
+    }
+
+    [Property]
+    public async Task SelectMany_WhenOtherNoneFirstTaskAsyncResultSelector_ReturnsNone(int value)
+    {
+        (await (from x in Task.FromResult(Some.With(value))
+                from y in None.OfType<int>()
+                select Task.FromResult(x + y)))
+            .Should()
+            .Be(None.OfType<int>());
+    }
 }
