@@ -28,6 +28,7 @@
       - Add SelectMany method with async result selector for Maybe
       - Add SelectMany method with async intermediate selector for Maybe
       - Add SelectMany method with async intermediate and result selector for Maybe
+      - Add SelectMany method for Task of Maybe
     </PackageReleaseNotes>
   </PropertyGroup>
 
