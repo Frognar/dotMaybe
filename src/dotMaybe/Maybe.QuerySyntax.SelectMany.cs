@@ -223,4 +223,36 @@ public static partial class MaybeExtensions
         return await (await source.ConfigureAwait(false))
             .SelectMany(intermediateSelector, resultSelector).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Projects and flattens a Maybe value wrapped in a Task, using both asynchronous intermediate and result selectors.
+    /// </summary>
+    /// <typeparam name="T">The type of the source Maybe value.</typeparam>
+    /// <typeparam name="TIntermediate">The type of the intermediate Maybe.</typeparam>
+    /// <typeparam name="TResult">The type of the final result.</typeparam>
+    /// <param name="source">A Task containing the source Maybe to transform.</param>
+    /// <param name="intermediateSelector">An asynchronous function that returns a Maybe of an intermediate value.</param>
+    /// <param name="resultSelector">An asynchronous function that combines the source value and intermediate value into a result.</param>
+    /// <returns>
+    /// A Task representing the asynchronous operation, containing a Maybe of the final result.
+    /// </returns>
+    /// <remarks>
+    /// This method enables LINQ query syntax for Maybe types wrapped in Tasks, allowing for complex asynchronous operations.
+    /// It uses ConfigureAwait(false) to avoid forcing continuations back to the original context, which is important for performance in asynchronous scenarios.
+    /// </remarks>
+    /// <example>
+    /// Task&lt;Maybe&lt;int&gt;&gt; maybeIntTask = FetchMaybeIntAsync();
+    /// var result = await (from x in maybeIntTask
+    ///                     from y in GetMaybeStringAsync(x)
+    ///                     select FetchDataAsync(x, y));
+    /// // Where GetMaybeString and FetchDataAsync are asynchronous.
+    /// </example>
+    public static async Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
+        this Task<Maybe<T>> source,
+        Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
+        Func<T, TIntermediate, Task<TResult>> resultSelector)
+    {
+        return await (await source.ConfigureAwait(false))
+            .SelectMany(intermediateSelector, resultSelector).ConfigureAwait(false);
+    }
 }
