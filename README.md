@@ -792,6 +792,30 @@ Console.WriteLine(boundMaybe.Match(
 ```csharp
 public static Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
         this Task<Maybe<T>> source,
+        Func<T, Maybe<TIntermediate>> intermediateSelector,
+        Func<T, TIntermediate, Task<TResult>> resultSelector)
+```
+
+Projects the value of a Maybe wrapped in a Task into a new Maybe, then flattens the result into a single Maybe.
+
+Example:
+
+```csharp
+Maybe<string> boundMaybe = await (
+    from v1 in Task.FromResult(Some.With(1))
+    from v2 in Some.With("Hello there!")
+    select Task.FromResult($"{v1}: {v2}"));
+
+Console.WriteLine(boundMaybe.Match(
+    () => "Empty",
+    value => value)); // Outputs: 1: Hello there!
+```
+
+#### SelectMany
+
+```csharp
+public static Task<Maybe<TResult>> SelectMany<T, TIntermediate, TResult>(
+        this Task<Maybe<T>> source,
         Func<T, Task<Maybe<TIntermediate>>> intermediateSelector,
         Func<T, TIntermediate, TResult> resultSelector)
 ```
