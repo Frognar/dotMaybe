@@ -574,12 +574,12 @@ Maybe<string> boundMaybe = await (
 
 ### Where
 
+Applies a predicate to the value in Maybe&lt;T&gt;, returning None if the predicate fails or the value doesn't exist.
+
+##### With synchronous predicate
 ```csharp
 public Maybe<T> Where(Predicate<T> predicate)
 ```
-
-Applies a predicate to the value in Maybe<T>, returning None if the predicate fails or the value doesn't exist.
-
 Example:
 ```csharp
 Maybe<int> filteredMaybe =
@@ -596,6 +596,28 @@ Maybe<int> filteredMaybe =
     from x in None.OfType<int>()
     where x < 40
     select x; // None
+```
+
+##### With asynchronous predicate
+```csharp
+public Task<Maybe<T>> Where(Func<T, Task<bool>> predicate)
+```
+Example:
+```csharp
+Maybe<int> filteredMaybe = await (
+    from x in Some.With(42)
+    where Task.FromResult(x > 40)
+    select x); // Some with 42
+
+Maybe<int> filteredMaybe = await (
+    from x in Some.With(42)
+    where Task.FromResult(x < 40)
+    select x); // None
+
+Maybe<int> filteredMaybe = await (
+    from x in None.OfType<int>()
+    where Task.FromResult(x < 40)
+    select x); // None
 ```
 
 ---
@@ -702,6 +724,56 @@ Maybe<string> boundMaybe = await (
     from v1 in Task.FromResult(Some.With(1))
     from v2 in Task.FromResult(Some.With("Hello there!"))
     select Task.FromResult($"{v1}: {v2}")); // Some with "1: Hello there!"
+```
+
+
+### Where
+
+Applies a predicate to the value in Maybe&lt;T&gt; wrapped in a Task,
+returning None if the predicate fails or the value doesn't exist.
+
+##### With synchronous predicate
+```csharp
+public Task<Maybe<T>> Where<T>(this Task<Maybe<T>> source, Predicate<T> predicate)
+```
+Example:
+```csharp
+Maybe<int> filteredMaybe =
+    from x in Task.FromResult(Some.With(42))
+    where x > 40
+    select x; // Some with 42
+
+Maybe<int> filteredMaybe =
+    from x in Task.FromResult(Some.With(42))
+    where x < 40
+    select x; // None
+
+Maybe<int> filteredMaybe =
+    from x in Task.FromResult(None.OfType<int>())
+    where x < 40
+    select x; // None
+```
+
+##### With asynchronous predicate
+```csharp
+public Task<Maybe<T>> Where<T>(this Task<Maybe<T>> source, Func<T, Task<bool>> predicate)
+```
+Example:
+```csharp
+Maybe<int> filteredMaybe = await (
+    from x in Task.FromResult(Some.With(42))
+    where Task.FromResult(x > 40)
+    select x); // Some with 42
+
+Maybe<int> filteredMaybe = await (
+    from x in Task.FromResult(Some.With(42))
+    where Task.FromResult(x < 40)
+    select x); // None
+
+Maybe<int> filteredMaybe = await (
+    from x in Task.FromResult(None.OfType<int>())
+    where Task.FromResult(x < 40)
+    select x); // None
 ```
 
 ---
