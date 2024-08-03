@@ -33,4 +33,33 @@ public class MaybeQuerySyntaxWhereTests
             .Should()
             .Be(None.OfType<int>());
     }
+    [Property]
+    public async Task Where_WhenSomeMatchingAsyncPredicate_ReturnsSome(NonNegativeInt value)
+    {
+        (await (from x in Some.With(value.Item)
+                where Task.FromResult(x >= 0)
+                select x))
+            .Should()
+            .Be(Some.With(value.Item));
+    }
+
+    [Property]
+    public async Task Where_WhenSomeNotMatchingAsyncPredicate_ReturnsNone(NegativeInt value)
+    {
+        (await (from x in Some.With(value.Item)
+                where Task.FromResult(x >= 0)
+                select x))
+            .Should()
+            .Be(None.OfType<int>());
+    }
+
+    [Fact]
+    public async Task Where_WhenNoneAsyncPredicate_ReturnsNone()
+    {
+        (await (from x in None.OfType<int>()
+                where Task.FromResult(x >= 0)
+                select x))
+            .Should()
+            .Be(None.OfType<int>());
+    }
 }
