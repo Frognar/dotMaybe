@@ -574,12 +574,12 @@ Maybe<string> boundMaybe = await (
 
 ### Where
 
+Applies a predicate to the value in Maybe<T>, returning None if the predicate fails or the value doesn't exist.
+
+##### With synchronous predicate
 ```csharp
 public Maybe<T> Where(Predicate<T> predicate)
 ```
-
-Applies a predicate to the value in Maybe<T>, returning None if the predicate fails or the value doesn't exist.
-
 Example:
 ```csharp
 Maybe<int> filteredMaybe =
@@ -596,6 +596,28 @@ Maybe<int> filteredMaybe =
     from x in None.OfType<int>()
     where x < 40
     select x; // None
+```
+
+##### With asynchronous predicate
+```csharp
+public Task<Maybe<T>> Where(Func<T, Task<bool>> predicate)
+```
+Example:
+```csharp
+Maybe<int> filteredMaybe = await (
+    from x in Some.With(42)
+    where Task.FromResult(x > 40)
+    select x); // Some with 42
+
+Maybe<int> filteredMaybe = await (
+    from x in Some.With(42)
+    where Task.FromResult(x < 40)
+    select x); // None
+
+Maybe<int> filteredMaybe = await (
+    from x in None.OfType<int>()
+    where Task.FromResult(x < 40)
+    select x); // None
 ```
 
 ---
