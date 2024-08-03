@@ -34,6 +34,8 @@
       - Add SelectMany method with async intermediate and result selector for Task of Maybe
       - Add FilterAsync method for Maybe
       - Add Where method with async predicate for Maybe
+      - Add Where method for Task of Maybe
+      - Add Where method with async predicate for Task of Maybe
     </PackageReleaseNotes>
   </PropertyGroup>
 
