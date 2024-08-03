@@ -236,6 +236,29 @@ Maybe<int> maybe = None.OfType<int>();
 Maybe<int> filteredMaybe = maybe.Filter(value => value < 50); // None
 ```
 
+### FilterAsync
+
+Applies an asynchronous predicate to the value in Maybe&lt;T&gt;,
+returning None if the predicate fails or the value doesn't exist.
+
+```csharp
+public public Task<Maybe<T>> FilterAsync(Func<T, Task<bool>> predicate)
+```
+Example:
+```csharp
+Maybe<int> maybe = Some.With(42);
+Maybe<int> filteredMaybe = await maybe.FilterAsync(
+    async value => await Task.FromResult(value < 50)); // Some with 42
+
+Maybe<int> maybe = Some.With(52);
+Maybe<int> filteredMaybe = await maybe.FilterAsync(
+    async value => await Task.FromResult(value < 50)); // None
+
+Maybe<int> maybe = None.OfType<int>();
+Maybe<int> filteredMaybe = await maybe.FilterAsync(
+    async value => await Task.FromResult(value < 50)); // None
+```
+
 ### OrDefault
 
 Returns the value if it exists, otherwise returns the specified default value.
@@ -355,7 +378,9 @@ Maybe<int> maybe = collection.FirstOrNone(); // None
 
 ##### With predicate
 ```csharp
-public static Maybe<T> FirstOrNone<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+public static Maybe<T> FirstOrNone<T>(
+    this IEnumerable<T> source,
+    Func<T, bool> predicate)
 ```
 Example:
 ```csharp
@@ -583,7 +608,9 @@ Transforms the value of a Maybe wrapped in a Task into a new Maybe.
 
 ##### With synchronous selector
 ```csharp
-public static Task<Maybe<TResult>> Select<T, TResult>(this Task<Maybe<T>> source, Func<T, Task<TResult>> selector)
+public static Task<Maybe<TResult>> Select<T, TResult>(
+    this Task<Maybe<T>> source,
+    Func<T, Task<TResult>> selector)
 ```
 Example:
 ```csharp
@@ -598,7 +625,9 @@ Maybe<string> mappedMaybe = await (
 
 ##### With asynchronous selector
 ```csharp
-public static Task<Maybe<TResult>> Select<T, TResult>(this Task<Maybe<T>> source, Func<T, TResult> selector)
+public static Task<Maybe<TResult>> Select<T, TResult>(
+    this Task<Maybe<T>> source,
+    Func<T, TResult> selector)
 ```
 Example:
 ```csharp
