@@ -127,6 +127,32 @@ public sealed class NullInputProperties
         Assert.True(joined == Maybes.Empty<string>(), madeBy);
     }
 
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
+    public async Task Async_steps_skip_it_without_waiting(string madeBy, Maybe<string> fromNull)
+    {
+        var calls = 0;
+
+        var mapped = fromNull.MapAsync(text =>
+        {
+            calls++;
+            return Task.FromResult(text.Length);
+        });
+        var matched = fromNull.MatchAsync(
+            text =>
+            {
+                calls++;
+                return Task.FromResult(text);
+            },
+            () => "none");
+
+        Assert.True(mapped.IsCompletedSuccessfully, madeBy);
+        Assert.True(matched.IsCompletedSuccessfully, madeBy);
+        Assert.True(await mapped == Maybes.Empty<int>(), madeBy);
+        Assert.Equal("none", await matched);
+        Assert.Equal(0, calls);
+    }
+
     [Property]
     public void Every_maybe_compares_with_it_exactly_as_with_None(Maybe<string> other)
     {

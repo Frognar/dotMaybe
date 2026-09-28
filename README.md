@@ -91,6 +91,18 @@ var ratio =
 
 Any step without a value makes the whole query `none`. `orderby`, `group` and `join` are not supported.
 
+### Async
+
+Every operation has an async counterpart that takes Task-returning delegates and returns a `ValueTask`:
+
+```csharp
+Maybe<User> user = await userId.BindAsync(id => repository.FindAsync(id, cancellationToken));
+string name = await user.MatchAsync(async u => await FormatAsync(u), () => "anonymous");
+```
+
+On `none` nothing runs and nothing waits: the result is already complete. Pass cancellation tokens through
+the lambda.
+
 ## Requirements
 
 .NET 11 (C# 15).

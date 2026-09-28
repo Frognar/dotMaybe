@@ -7,6 +7,7 @@ internal static class Consumer
 {
     public static string File(string members, string inNamespace = "Consumer") => $$"""
           using System;
+          using System.Threading.Tasks;
           using DotMaybe;
           using static DotMaybe.Prelude;
 
