@@ -103,6 +103,15 @@ string name = await user.MatchAsync(async u => await FormatAsync(u), () => "anon
 On `none` nothing runs and nothing waits: the result is already complete. Pass cancellation tokens through
 the lambda.
 
+Awaitable maybes (`Task<Maybe<T>>`, `ValueTask<Maybe<T>>`) take the same steps, so a pipeline needs one `await`:
+
+```csharp
+string name = await repository.FindAsync(id)          // Task<Maybe<User>>
+    .MapAsync(user => user.Name)
+    .FilterAsync(name => name.Length > 0)
+    .OrDefaultAsync("anonymous");
+```
+
 ## Requirements
 
 .NET 11 (C# 15).
