@@ -1,5 +1,7 @@
 # dotMaybe
 
+[![CI](https://github.com/Frognar/dotMaybe/actions/workflows/ci.yml/badge.svg)](https://github.com/Frognar/dotMaybe/actions/workflows/ci.yml)
+
 A `Maybe<T>` for C# 15 built on union types: exhaustive pattern matching, query syntax, and no invalid states.
 
 > **Status:** 2.0 is a ground-up rewrite for .NET 11 and is under active development. The 1.x line is retired.
