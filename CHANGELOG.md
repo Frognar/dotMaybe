@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.6](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.5...v2.0.0-alpha.6) (2026-09-28)
+
+
+### Features
+
+* add async pipeline support for Task&lt;Maybe&lt;T&gt;&gt; and ValueTask&lt;May… ([#12](https://github.com/Frognar/dotMaybe/issues/12)) ([807b0dd](https://github.com/Frognar/dotMaybe/commit/807b0ddd133e08d4bc88d5a19d8a12947715ce53))
+
 ## [2.0.0-alpha.5](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.4...v2.0.0-alpha.5) (2026-09-28)
 
 
