@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.4](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.3...v2.0.0-alpha.4) (2026-09-28)
+
+
+### Features
+
+* add LINQ query syntax for Maybe types ([#8](https://github.com/Frognar/dotMaybe/issues/8)) ([249a5ab](https://github.com/Frognar/dotMaybe/commit/249a5abe432aea37c2adf2237943fc4d51b35606))
+
 ## [2.0.0-alpha.3](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.2...v2.0.0-alpha.3) (2026-09-28)
 
 
