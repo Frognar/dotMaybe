@@ -129,6 +129,35 @@ public sealed class NullInputProperties
 
     [Theory]
     [MemberData(nameof(MaybesMadeFromNull))]
+    public void Combinators_treat_it_as_None(string madeBy, Maybe<string> fromNull)
+    {
+        var calls = 0;
+        var nested = Maybes.Some(fromNull);
+
+        var orElse = fromNull.OrElse(Maybes.Some("alternative"));
+        var zipped = fromNull.Zip(Maybes.Some(1), (text, number) =>
+        {
+            calls++;
+            return text + number;
+        });
+        var folded = fromNull.Fold("state", (state, text) =>
+        {
+            calls++;
+            return state + text;
+        });
+        fromNull.Iter(_ => calls++);
+        var tapped = fromNull.Tap(_ => calls++);
+
+        Assert.Equal(0, calls);
+        Assert.Equal(Maybes.Some("alternative"), orElse);
+        Assert.True(zipped == Maybes.Empty<string>(), madeBy);
+        Assert.Equal("state", folded);
+        Assert.True(nested.Flatten() == Maybes.Empty<string>(), madeBy);
+        Assert.True(tapped == Maybes.Empty<string>(), madeBy);
+    }
+
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
     public async Task Async_queries_over_it_give_None_without_waiting(string madeBy, Maybe<string> fromNull)
     {
         var calls = 0;

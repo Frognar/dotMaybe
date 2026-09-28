@@ -91,6 +91,21 @@ var ratio =
 
 Any step without a value makes the whole query `none`. `orderby`, `group` and `join` are not supported.
 
+### Combining
+
+```csharp
+Maybe<int> port = Parse(fromArguments).OrElse(() => Parse(fromEnvironment)).OrElse(8080);
+
+Maybe<int> area = Parse(width).Zip(Parse(height), (w, h) => w * h);   // none unless both parse
+Maybe<(int, int)> size = Parse(width).Zip(Parse(height));
+
+Maybe<int> flat = nested.Flatten();                                  // Maybe<Maybe<int>> → Maybe<int>
+int total = port.Fold(0, (sum, value) => sum + value);
+
+port.Iter(Console.WriteLine);                                         // side effects only, and only with a value
+Maybe<string> shown = port.Tap(Console.WriteLine).Map(p => $":{p}");  // side effect inside a chain
+```
+
 ### Async
 
 Every operation has an async counterpart that takes Task-returning delegates and returns a `ValueTask`:
