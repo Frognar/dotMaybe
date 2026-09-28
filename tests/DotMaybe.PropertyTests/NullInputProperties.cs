@@ -129,6 +129,33 @@ public sealed class NullInputProperties
 
     [Theory]
     [MemberData(nameof(MaybesMadeFromNull))]
+    public async Task Async_queries_over_it_give_None_without_waiting(string madeBy, Maybe<string> fromNull)
+    {
+        var calls = 0;
+        Func<string, Task<Maybe<string>>> next = text =>
+        {
+            calls++;
+            return Task.FromResult(Maybes.Some(text));
+        };
+
+        var fromTask =
+            from text in Task.FromResult(fromNull)
+            from other in next(text)
+            select text + other;
+        var fromMaybe =
+            from text in fromNull
+            from other in next(text)
+            select text + other;
+
+        Assert.True(fromTask.IsCompletedSuccessfully, madeBy);
+        Assert.True(fromMaybe.IsCompletedSuccessfully, madeBy);
+        Assert.True(await fromTask == Maybes.Empty<string>(), madeBy);
+        Assert.True(await fromMaybe == Maybes.Empty<string>(), madeBy);
+        Assert.Equal(0, calls);
+    }
+
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
     public async Task Async_steps_skip_it_without_waiting(string madeBy, Maybe<string> fromNull)
     {
         var calls = 0;

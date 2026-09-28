@@ -112,6 +112,18 @@ string name = await repository.FindAsync(id)          // Task<Maybe<User>>
     .OrDefaultAsync("anonymous");
 ```
 
+Query syntax works over them too. Each `from` may await a `Task<Maybe<T>>` or take a plain `Maybe<T>`, and the
+whole query is one `ValueTask<Maybe<T>>`:
+
+```csharp
+string report = await (
+        from user in repository.FindUserAsync(id)          // Task<Maybe<User>>
+        from order in repository.LastOrderAsync(user)      // Task<Maybe<Order>>
+        where order.Total > 0
+        select $"{user.Name}: {order.Total}")
+    .OrDefaultAsync("no orders");
+```
+
 ## Requirements
 
 .NET 11 (C# 15).
