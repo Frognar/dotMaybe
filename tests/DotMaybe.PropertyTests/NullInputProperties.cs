@@ -82,6 +82,34 @@ public sealed class NullInputProperties
         Assert.Equal("fallback", fromNull.OrDefault(() => "fallback"));
     }
 
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
+    public void Map_Bind_and_Filter_skip_it(string madeBy, Maybe<string> fromNull)
+    {
+        var calls = 0;
+
+        var mapped = fromNull.Map(text =>
+        {
+            calls++;
+            return text.Length;
+        });
+        var bound = fromNull.Bind(text =>
+        {
+            calls++;
+            return Maybes.Some(text.Length);
+        });
+        var filtered = fromNull.Filter(_ =>
+        {
+            calls++;
+            return true;
+        });
+
+        Assert.Equal(0, calls);
+        Assert.True(mapped == Maybes.Empty<int>(), madeBy);
+        Assert.True(bound == Maybes.Empty<int>(), madeBy);
+        Assert.True(filtered == Maybes.Empty<string>(), madeBy);
+    }
+
     [Property]
     public void Every_maybe_compares_with_it_exactly_as_with_None(Maybe<string> other)
     {
