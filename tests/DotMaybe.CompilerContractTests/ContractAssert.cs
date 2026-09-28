@@ -28,6 +28,22 @@ internal static class ContractAssert
         Assert.Fail($"Expected the compiler to reject the snippet with {errorId}.{result.Describe()}");
     }
 
+    /// <summary>
+    /// The snippet is rejected, and some error mentions <paramref name="text"/>. Use it when the error code is a
+    /// compiler detail and only the rejection matters.
+    /// </summary>
+    public static void FailsMentioning(CompilationResult result, string text)
+    {
+        if (result.Errors.Any(error =>
+                error.GetMessage(System.Globalization.CultureInfo.InvariantCulture)
+                    .Contains(text, StringComparison.Ordinal)))
+        {
+            return;
+        }
+
+        Assert.Fail($"Expected the compiler to reject the snippet with an error mentioning '{text}'.{result.Describe()}");
+    }
+
     /// <summary>The snippet compiles, but the switch is reported as not exhaustive (CS8509).</summary>
     public static void WarnsSwitchIsNotExhaustive(CompilationResult result)
     {
