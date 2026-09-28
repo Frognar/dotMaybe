@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.2](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.1...v2.0.0-alpha.2) (2026-09-28)
+
+
+### Features
+
+* add `Match` and `OrDefault` methods to `Maybe` with comprehensive tests ([#4](https://github.com/Frognar/dotMaybe/issues/4)) ([8b8871b](https://github.com/Frognar/dotMaybe/commit/8b8871b741604aef8a3a2810743a62fd65031499))
+
 ## [2.0.0-alpha.1](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (2026-09-28)
 
 
