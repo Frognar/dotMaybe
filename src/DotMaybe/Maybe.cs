@@ -100,6 +100,50 @@ public readonly struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
     }
 
     /// <summary>
+    /// Reduces this maybe to a single result: <paramref name="some"/> runs on the value,
+    /// <paramref name="none"/> runs when there is none. Exactly one of them runs, exactly once.
+    /// </summary>
+    /// <remarks>
+    /// This is the way to read a value in generic code, where <c>maybe is T value</c> does not compile.
+    /// </remarks>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="some">Produces the result from the value.</param>
+    /// <param name="none">Produces the result when there is no value.</param>
+    /// <returns>The result of the branch that ran.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="some"/> or <paramref name="none"/> is null.</exception>
+    public TResult Match<TResult>(Func<T, TResult> some, Func<TResult> none)
+    {
+        ArgumentNullException.ThrowIfNull(some);
+        ArgumentNullException.ThrowIfNull(none);
+        return _isSome ? some(_value) : none();
+    }
+
+    /// <summary>
+    /// Returns the value, or <paramref name="fallback"/> when there is none.
+    /// </summary>
+    /// <param name="fallback">The result when there is no value.</param>
+    /// <returns>The value or the fallback. Never <see langword="null"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="fallback"/> is null.</exception>
+    public T OrDefault(T fallback)
+    {
+        ArgumentNullException.ThrowIfNull(fallback);
+        return _isSome ? _value : fallback;
+    }
+
+    /// <summary>
+    /// Returns the value, or the result of <paramref name="fallback"/> when there is none.
+    /// <paramref name="fallback"/> runs only when there is no value.
+    /// </summary>
+    /// <param name="fallback">Produces the result when there is no value.</param>
+    /// <returns>The value or the produced fallback.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="fallback"/> is null.</exception>
+    public T OrDefault(Func<T> fallback)
+    {
+        ArgumentNullException.ThrowIfNull(fallback);
+        return _isSome ? _value : fallback();
+    }
+
+    /// <summary>
     /// Compares two maybes: both <see cref="None"/>, or both holding equal values.
     /// </summary>
     /// <param name="left">The first maybe.</param>
