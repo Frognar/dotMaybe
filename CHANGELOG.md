@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.8](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.7...v2.0.0-alpha.8) (2026-09-28)
+
+
+### Features
+
+* add combinators (OrElse, Zip, Fold, Iter, Tap, Flatten) and the… ([#16](https://github.com/Frognar/dotMaybe/issues/16)) ([1664cb8](https://github.com/Frognar/dotMaybe/commit/1664cb822c82e115213fa4f4c31b841fc47ee303))
+
 ## [2.0.0-alpha.7](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.6...v2.0.0-alpha.7) (2026-09-28)
 
 
