@@ -37,6 +37,13 @@ Releases are automated with release-please and published to nuget.org with Trust
 
 The package version comes from the git tag through MinVer; nothing else needs editing.
 
+Before merging the first release PR, check the Trusted Publishing policy on nuget.org. A new policy can start as
+*temporarily active* for 7 days and only becomes permanent after the first successful publish. If the 7 days have
+passed, restart the window on the policy list, then merge.
+
+The release PR is opened by `GITHUB_TOKEN`, so CI does not run on it and its required checks never report.
+Merge it with the ruleset bypass (see below), or set up `RELEASE_PLEASE_TOKEN` instead.
+
 Moving to the next pre-release phase or to the final release: add a footer to a commit on `main`, e.g.
 
 ```text
@@ -56,18 +63,26 @@ For `2.0.0` itself, also set `"prerelease": false` in `release-please-config.jso
 
 ## One-time repository setup
 
-1. **Environment:** Settings → Environments → `release` → Required reviewers: yourself.
-2. **Secret `NUGET_USER`:** your nuget.org profile name (not the e-mail address).
-3. **nuget.org Trusted Publishing policy:** owner `Frognar`, repository `dotMaybe`, workflow `release.yml`,
-   environment `release`.
-4. **Actions permissions:** Settings → Actions → General → allow GitHub Actions to create and approve pull requests
+1. **Pull requests** (Settings → General → Pull Requests):
+   - allow squash merging only;
+   - default squash commit message: *Pull request title* (release-please reads that commit message);
+   - automatically delete head branches.
+2. **Actions** (Settings → Actions → General): allow GitHub Actions to create and approve pull requests
    (release-please opens the release PR).
-5. **Optional secret `RELEASE_PLEASE_TOKEN`:** a fine-grained token for this repository with *Contents* and
-   *Pull requests* read/write. Without it the release PR is opened with `GITHUB_TOKEN`, which does not trigger CI,
-   so required checks never report on it.
-6. **Ruleset for `main`:**
-   - require a pull request;
-   - require the status checks `Build and test (ubuntu-latest)` and `Conventional Commits title`;
+3. **Environment `release`** (Settings → Environments):
+   - required reviewers: yourself, with *Prevent self-review* off;
+   - deployment branches: `main` only. Not tags: the publish job runs in the workflow started by the push to `main`;
+   - environment secret `NUGET_USER`: your nuget.org profile name (not the e-mail address).
+4. **nuget.org Trusted Publishing policy:** owner `Frognar`, repository `dotMaybe`, workflow `release.yml`,
+   environment `release`, packages `dotMaybe`. See *Releases* for the 7-day activation window.
+5. **Security** (Settings → Code security): private vulnerability reporting and Dependabot alerts on.
+6. **Ruleset for `main`** (Settings → Rules → Rulesets):
+   - bypass list: *Repository admin*, for pull requests only (to merge the release PR);
+   - require a pull request, 0 approvals, squash only;
+   - require the status checks `Build and test (ubuntu-latest)` and `Conventional Commits title`
+     (the second one can be selected once a first pull request has run it);
    - require linear history and signed commits;
    - block force pushes and deletion.
-
+7. **Optional secret `RELEASE_PLEASE_TOKEN`:** a fine-grained token for this repository with *Contents* and
+   *Pull requests* read/write. With it, the release PR triggers CI like any other PR and no bypass is needed.
+   Tokens expire, so this needs renewing.

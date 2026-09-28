@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace DotMaybe;
@@ -25,11 +26,20 @@ namespace DotMaybe;
 /// There is no invalid state: <c>default(Maybe&lt;T&gt;)</c> is <see cref="None"/>, and a <see langword="null"/>
 /// reaching the conversion at run time becomes <see cref="None"/> as well.
 /// </para>
+/// <para>
+/// Two maybes are equal when both are <see cref="None"/>, or when both hold values that are equal according to
+/// <see cref="EqualityComparer{T}.Default"/>.
+/// </para>
 /// </remarks>
 [Union]
-public readonly struct Maybe<T> : Maybe<T>.IUnionMembers
+public readonly struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
     where T : notnull
 {
+    private readonly T _value;
+    private readonly bool _isSome;
+
+    private Maybe(T value, bool isSome) => (_value, _isSome) = (value, isSome);
+
     /// <summary>
     /// The union members the C# compiler uses for union conversions and pattern matching.
     /// </summary>
@@ -45,14 +55,15 @@ public readonly struct Maybe<T> : Maybe<T>.IUnionMembers
         /// </summary>
         /// <param name="value">The value to wrap.</param>
         /// <returns>The value case, or <see cref="None"/> for <see langword="null"/>.</returns>
-        static Maybe<T> Create(T value) => throw new NotImplementedException();
+        [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
+        static Maybe<T> Create(T value) => value is null ? default : new Maybe<T>(value, true);
 
         /// <summary>
         /// Creates an empty <see cref="Maybe{T}"/>.
         /// </summary>
         /// <param name="value">The <see cref="None"/> marker.</param>
         /// <returns>The <see cref="None"/> case.</returns>
-        static Maybe<T> Create(None value) => throw new NotImplementedException();
+        static Maybe<T> Create(None value) => default;
 
         /// <summary>
         /// Gets the current case: a <c>T</c> or <see cref="None"/>. Never <see langword="null"/>.
@@ -74,9 +85,55 @@ public readonly struct Maybe<T> : Maybe<T>.IUnionMembers
         bool TryGetValue(out None value);
     }
 
-    object IUnionMembers.Value => throw new NotImplementedException();
+    object IUnionMembers.Value => _isSome ? _value : default(None);
 
-    bool IUnionMembers.TryGetValue(out T value) => throw new NotImplementedException();
+    bool IUnionMembers.TryGetValue(out T value)
+    {
+        value = _value;
+        return _isSome;
+    }
 
-    bool IUnionMembers.TryGetValue(out None value) => throw new NotImplementedException();
+    bool IUnionMembers.TryGetValue(out None value)
+    {
+        value = default;
+        return !_isSome;
+    }
+
+    /// <summary>
+    /// Compares two maybes: both <see cref="None"/>, or both holding equal values.
+    /// </summary>
+    /// <param name="left">The first maybe.</param>
+    /// <param name="right">The second maybe.</param>
+    /// <returns><see langword="true"/> when the maybes are equal; otherwise <see langword="false"/>.</returns>
+    public static bool operator ==(Maybe<T> left, Maybe<T> right) => left.Equals(right);
+
+    /// <summary>
+    /// Compares two maybes for inequality. Always the opposite of <c>==</c>.
+    /// </summary>
+    /// <param name="left">The first maybe.</param>
+    /// <param name="right">The second maybe.</param>
+    /// <returns><see langword="true"/> when the maybes differ; otherwise <see langword="false"/>.</returns>
+    public static bool operator !=(Maybe<T> left, Maybe<T> right) => !left.Equals(right);
+
+    /// <summary>
+    /// Determines whether this maybe equals <paramref name="other"/>: both <see cref="None"/>, or both holding
+    /// values that are equal according to <see cref="EqualityComparer{T}.Default"/>.
+    /// </summary>
+    /// <param name="other">The maybe to compare with.</param>
+    /// <returns><see langword="true"/> when the maybes are equal; otherwise <see langword="false"/>.</returns>
+    public bool Equals(Maybe<T> other) =>
+        _isSome == other._isSome
+        && (!_isSome || EqualityComparer<T>.Default.Equals(_value, other._value));
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj) => obj is Maybe<T> maybe && Equals(maybe);
+
+    /// <inheritdoc/>
+    public override int GetHashCode() => _isSome ? HashCode.Combine(true, _value) : 0;
+
+    /// <summary>
+    /// Returns <c>Some(value)</c> for a value and <c>None</c> for the empty case.
+    /// </summary>
+    /// <returns>A text representation of this maybe.</returns>
+    public override string ToString() => _isSome ? $"Some({_value})" : "None";
 }

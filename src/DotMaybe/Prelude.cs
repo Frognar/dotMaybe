@@ -22,6 +22,6 @@ public static class Prelude
     /// </code>
     /// </example>
 #pragma warning disable IDE1006 // Naming rule violation: lower-case name is intentional (keyword-like value).
-    public static None none => throw new NotImplementedException();
+    public static None none => default;
 #pragma warning restore IDE1006
 }

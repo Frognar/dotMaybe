@@ -1,6 +1,5 @@
 using FsCheck;
 using FsCheck.Fluent;
-using static DotMaybe.Prelude;
 
 namespace DotMaybe.PropertyTests;
 
@@ -11,24 +10,26 @@ public static class MaybeArbitraries
 {
     /// <summary>
     /// <c>Maybe&lt;T&gt;</c> for any <c>T</c> FsCheck can generate: <c>none</c> and values in equal proportion.
-    /// FsCheck injects the arbitrary for <c>T</c>.
+    /// FsCheck injects the arbitrary for <c>T</c>, so nested maybes (<c>Maybe&lt;Maybe&lt;int&gt;&gt;</c>) work too.
     /// </summary>
     /// <remarks>
-    /// No shrinking yet: shrinking needs pattern matching on <c>Maybe&lt;T&gt;</c>, which arrives with TP-01.
+    /// A value shrinks to <c>none</c> first, then to the shrinks of the value itself. <c>none</c> does not shrink.
     /// </remarks>
     public static Arbitrary<Maybe<T>> MaybeOf<T>(Arbitrary<T> values)
         where T : notnull
     {
         var maybes = Gen.OneOf(
-            Gen.Constant(Empty<T>()),
-            values.Generator.Select(value => Wrap(value)));
+            Gen.Constant(Maybes.Empty<T>()),
+            values.Generator.Select(value => Maybes.Some(value)));
 
-        return Arb.From(maybes);
+        return Arb.From(maybes, maybe => Shrink(maybe, values));
     }
 
-    private static Maybe<T> Empty<T>()
-        where T : notnull => none;
-
-    private static Maybe<T> Wrap<T>(T value)
-        where T : notnull => value;
+    private static IEnumerable<Maybe<T>> Shrink<T>(Maybe<T> maybe, Arbitrary<T> values)
+        where T : notnull =>
+        Maybes.TryGetValue(maybe, out var value)
+            ? values.Shrinker(value)
+                .Select(smaller => Maybes.Some(smaller))
+                .Prepend(Maybes.Empty<T>())
+            : Enumerable.Empty<Maybe<T>>();
 }
