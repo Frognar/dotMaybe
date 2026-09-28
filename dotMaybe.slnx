@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DotMaybe/DotMaybe.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DotMaybe.CompilerContractTests/DotMaybe.CompilerContractTests.csproj" />
+    <Project Path="tests/DotMaybe.PropertyTests/DotMaybe.PropertyTests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>
