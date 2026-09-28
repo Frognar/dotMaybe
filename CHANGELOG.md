@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.3](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.2...v2.0.0-alpha.3) (2026-09-28)
+
+
+### Features
+
+* implement `Map`, `Bind`, and `Filter` methods for `Maybe` with tests and contract validations ([#6](https://github.com/Frognar/dotMaybe/issues/6)) ([2352236](https://github.com/Frognar/dotMaybe/commit/2352236dd24a9f94923e8e384979aca1d35c9d35))
+
 ## [2.0.0-alpha.2](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.1...v2.0.0-alpha.2) (2026-09-28)
 
 
