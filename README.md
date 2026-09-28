@@ -23,7 +23,73 @@ var text = otherMaybe switch
 - **Union types.** `Maybe<T>` has exactly two cases, `T` and `None`. Values convert implicitly, and a `switch` that handles both is exhaustive.
 - **No invalid states.** `default(Maybe<T>)` is `None`, and a `null` never becomes a value.
 - **Functional API.** No `.Value` and no throwing accessors: you get a value out through pattern matching or total functions.
-- **Query syntax** (planned for 2.0.0-alpha.1): `from x in a from y in b where y != 0 select x / y`.
+- **Query syntax.** `from`, `where`, `let` and `select` work over maybes.
+
+## Usage
+
+Import the namespace, and `Prelude` if you want the lower-case `none`:
+
+```csharp
+using DotMaybe;
+using static DotMaybe.Prelude;
+```
+
+### Creating
+
+```csharp
+Maybe<int> answer = 42;           // a value
+Maybe<int> nothing = none;        // no value
+Maybe<int> parsed = ok ? 42 : none;
+Maybe<int> empty = default;       // also none
+```
+
+A `null` that slips past nullable analysis becomes `none` as well.
+
+### Getting the value out
+
+```csharp
+var text = answer switch
+{
+    int value => $"The answer is {value}",
+    None => "No answer",
+};
+
+var same = answer.Match(value => $"The answer is {value}", () => "No answer");
+var number = answer.OrDefault(0);
+var lazy = answer.OrDefault(() => ExpensiveFallback());
+```
+
+In generic code use `Match`: C# does not allow `maybe is T value` when `T` is a type parameter.
+
+### Transforming and chaining
+
+```csharp
+static Maybe<int> Parse(string text) => int.TryParse(text, out var number) ? number : none;
+
+Maybe<string> input = "21";
+
+var doubled = input.Bind(Parse).Map(number => number * 2);   // Some(42)
+var positive = doubled.Filter(number => number > 0);         // Some(42)
+```
+
+When a `Bind` step returns either a value or `none` inline, name the result type,
+because the compiler cannot infer it from `value : none`:
+
+```csharp
+var even = doubled.Bind<int>(number => number % 2 == 0 ? number : none);
+```
+
+### Query syntax
+
+```csharp
+var ratio =
+    from numerator in Parse("10")
+    from denominator in Parse("2")
+    where denominator != 0
+    select numerator / denominator;   // Some(5)
+```
+
+Any step without a value makes the whole query `none`. `orderby`, `group` and `join` are not supported.
 
 ## Requirements
 

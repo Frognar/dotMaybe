@@ -110,6 +110,23 @@ public sealed class NullInputProperties
         Assert.True(filtered == Maybes.Empty<string>(), madeBy);
     }
 
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
+    public void Queries_over_it_give_None(string madeBy, Maybe<string> fromNull)
+    {
+        var selected =
+            from text in fromNull
+            select text.Length;
+
+        var joined =
+            from text in fromNull
+            from other in Maybes.Some("other")
+            select text + other;
+
+        Assert.True(selected == Maybes.Empty<int>(), madeBy);
+        Assert.True(joined == Maybes.Empty<string>(), madeBy);
+    }
+
     [Property]
     public void Every_maybe_compares_with_it_exactly_as_with_None(Maybe<string> other)
     {

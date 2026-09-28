@@ -196,6 +196,65 @@ public readonly struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
     }
 
     /// <summary>
+    /// Query-syntax name for <see cref="Map{TResult}"/>: <c>from x in maybe select f(x)</c>.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the transformed value.</typeparam>
+    /// <param name="selector">Transforms the value.</param>
+    /// <returns>The transformed value, or <see cref="None"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="selector"/> is null.</exception>
+    public Maybe<TResult> Select<TResult>(Func<T, TResult> selector)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        return Map(selector);
+    }
+
+    /// <summary>
+    /// Query-syntax name for <see cref="Bind{TResult}"/>.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the value produced by the next step.</typeparam>
+    /// <param name="selector">The next step.</param>
+    /// <returns>The result of the next step, or <see cref="None"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="selector"/> is null.</exception>
+    public Maybe<TResult> SelectMany<TResult>(Func<T, Maybe<TResult>> selector)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        return Bind(selector);
+    }
+
+    /// <summary>
+    /// Query-syntax form of <see cref="Bind{TResult}"/> followed by a projection:
+    /// <c>from x in maybe from y in f(x) select g(x, y)</c>.
+    /// </summary>
+    /// <typeparam name="TIntermediate">The type of the value produced by <paramref name="selector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the projected value.</typeparam>
+    /// <param name="selector">The next step.</param>
+    /// <param name="resultSelector">Combines the value with the result of the next step.</param>
+    /// <returns>The projected value, or <see cref="None"/> when either step has no value.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="selector"/> or <paramref name="resultSelector"/> is null.
+    /// </exception>
+    public Maybe<TResult> SelectMany<TIntermediate, TResult>(
+        Func<T, Maybe<TIntermediate>> selector,
+        Func<T, TIntermediate, TResult> resultSelector)
+        where TIntermediate : notnull
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        ArgumentNullException.ThrowIfNull(resultSelector);
+        return Bind(v1 => selector(v1).Map(v2 => resultSelector(v1, v2)));
+    }
+
+    /// <summary>
+    /// Query-syntax name for <see cref="Filter"/>: <c>from x in maybe where p(x) select x</c>.
+    /// </summary>
+    /// <param name="predicate">The condition the value must satisfy.</param>
+    /// <returns>This maybe when the value satisfies <paramref name="predicate"/>; otherwise <see cref="None"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="predicate"/> is null.</exception>
+    public Maybe<T> Where(Func<T, bool> predicate) => Filter(predicate);
+
+    /// <summary>
     /// Compares two maybes: both <see cref="None"/>, or both holding equal values.
     /// </summary>
     /// <param name="left">The first maybe.</param>
