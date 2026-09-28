@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.7](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.6...v2.0.0-alpha.7) (2026-09-28)
+
+
+### Features
+
+* add async query syntax support for maybes ([#14](https://github.com/Frognar/dotMaybe/issues/14)) ([2e296b3](https://github.com/Frognar/dotMaybe/commit/2e296b3b802160d624fee7d172bdda2013e4888f))
+
 ## [2.0.0-alpha.6](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.5...v2.0.0-alpha.6) (2026-09-28)
 
 
