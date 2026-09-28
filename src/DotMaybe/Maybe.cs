@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using static DotMaybe.Prelude;
 
 namespace DotMaybe;
 
@@ -141,6 +142,57 @@ public readonly struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
     {
         ArgumentNullException.ThrowIfNull(fallback);
         return _isSome ? _value : fallback();
+    }
+
+    /// <summary>
+    /// Transforms the value with <paramref name="map"/>; <see cref="None"/> stays <see cref="None"/>.
+    /// </summary>
+    /// <remarks>
+    /// <paramref name="map"/> runs only when there is a value. A <see langword="null"/> result becomes
+    /// <see cref="None"/>.
+    /// </remarks>
+    /// <typeparam name="TResult">The type of the transformed value.</typeparam>
+    /// <param name="map">Transforms the value.</param>
+    /// <returns>The transformed value, or <see cref="None"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="map"/> is null.</exception>
+    public Maybe<TResult> Map<TResult>(Func<T, TResult> map)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(map);
+        return _isSome ? map(_value) : none;
+    }
+
+    /// <summary>
+    /// Continues with <paramref name="bind"/>, which may itself produce <see cref="None"/>;
+    /// <see cref="None"/> stays <see cref="None"/>.
+    /// </summary>
+    /// <remarks>
+    /// <paramref name="bind"/> runs only when there is a value. Use it to chain steps that can each fail.
+    /// </remarks>
+    /// <typeparam name="TResult">The type of the value produced by the next step.</typeparam>
+    /// <param name="bind">The next step.</param>
+    /// <returns>The result of the next step, or <see cref="None"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="bind"/> is null.</exception>
+    public Maybe<TResult> Bind<TResult>(Func<T, Maybe<TResult>> bind)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+        return _isSome ? bind(_value) : none;
+    }
+
+    /// <summary>
+    /// Keeps the value only when it satisfies <paramref name="predicate"/>; otherwise <see cref="None"/>.
+    /// </summary>
+    /// <remarks>
+    /// <paramref name="predicate"/> runs only when there is a value.
+    /// </remarks>
+    /// <param name="predicate">The condition the value must satisfy.</param>
+    /// <returns>This maybe when the value satisfies <paramref name="predicate"/>; otherwise <see cref="None"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="predicate"/> is null.</exception>
+    public Maybe<T> Filter(Func<T, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        return _isSome && predicate(_value) ? this : none;
     }
 
     /// <summary>

@@ -49,4 +49,15 @@ internal static class ContractAssert
 
         Assert.Fail($"Expected no errors and a nullable-analysis (CS86xx) warning.{result.Describe()}");
     }
+
+    /// <summary>The snippet compiles, but with the given warning.</summary>
+    public static void WarnsWith(CompilationResult result, string warningId)
+    {
+        if (!result.Errors.Any() && result.Warnings.Any(warning => warning.Id == warningId))
+        {
+            return;
+        }
+
+        Assert.Fail($"Expected no errors and a {warningId} warning.{result.Describe()}");
+    }
 }
