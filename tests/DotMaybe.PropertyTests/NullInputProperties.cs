@@ -65,6 +65,23 @@ public sealed class NullInputProperties
         Assert.True(members.TryGetValue(out None _), madeBy);
     }
 
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
+    public void Match_takes_the_none_branch(string madeBy, Maybe<string> fromNull)
+    {
+        _ = madeBy;
+        Assert.Equal("none", fromNull.Match(_ => "some", () => "none"));
+    }
+
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
+    public void OrDefault_gives_the_fallback(string madeBy, Maybe<string> fromNull)
+    {
+        _ = madeBy;
+        Assert.Equal("fallback", fromNull.OrDefault("fallback"));
+        Assert.Equal("fallback", fromNull.OrDefault(() => "fallback"));
+    }
+
     [Property]
     public void Every_maybe_compares_with_it_exactly_as_with_None(Maybe<string> other)
     {
