@@ -28,6 +28,17 @@ internal static class ContractAssert
         Assert.Fail($"Expected the compiler to reject the snippet with {errorId}.{result.Describe()}");
     }
 
+    /// <summary>The snippet is rejected; which error the compiler reports does not matter.</summary>
+    public static void DoesNotCompile(CompilationResult result)
+    {
+        if (result.Errors.Any())
+        {
+            return;
+        }
+
+        Assert.Fail($"Expected the compiler to reject the snippet.{result.Describe()}");
+    }
+
     /// <summary>
     /// The snippet is rejected, and some error mentions <paramref name="text"/>. Use it when the error code is a
     /// compiler detail and only the rejection matters.

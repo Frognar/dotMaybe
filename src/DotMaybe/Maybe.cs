@@ -33,7 +33,7 @@ namespace DotMaybe;
 /// </para>
 /// </remarks>
 [Union]
-public readonly struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
+public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
     where T : notnull
 {
     private readonly T _value;
