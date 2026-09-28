@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.5](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.4...v2.0.0-alpha.5) (2026-09-28)
+
+
+### Features
+
+* add asynchronous API for Maybe operations ([#10](https://github.com/Frognar/dotMaybe/issues/10)) ([143833a](https://github.com/Frognar/dotMaybe/commit/143833a3eed579eabfb47a1afea2d95ad47cdf63))
+
 ## [2.0.0-alpha.4](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.3...v2.0.0-alpha.4) (2026-09-28)
 
 
