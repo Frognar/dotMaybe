@@ -57,6 +57,14 @@ public sealed class NullInputProperties
 
     [Theory]
     [MemberData(nameof(MaybesMadeFromNull))]
+    public void It_is_written_to_JSON_as_null(string madeBy, Maybe<string> fromNull)
+    {
+        _ = madeBy;
+        Assert.Equal("null", System.Text.Json.JsonSerializer.Serialize(fromNull));
+    }
+
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
     public void It_is_shown_as_None(string madeBy, Maybe<string> fromNull)
     {
         _ = madeBy;
