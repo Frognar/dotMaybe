@@ -42,3 +42,18 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 # Tests use sentence-like method names with underscores.
 [tests/**/*.cs]
 dotnet_diagnostic.CA1707.severity = none
+
+# The library builds with AnalysisLevel latest-all (src/DotMaybe/DotMaybe.csproj). Deliberate exceptions:
+[src/**/*.cs]
+# C# unions need the nested member-provider interface Maybe<T>.IUnionMembers, with static Create and TryGetValue.
+dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA1000.severity = none
+dotnet_diagnostic.CA1021.severity = none
+# D51: IComparable without <, >, <=, >= on purpose; maybeAge >= 18 must not compile.
+dotnet_diagnostic.CA1036.severity = none
+# Exception messages are not localized.
+dotnet_diagnostic.CA1303.severity = none
+
+# D32/D33: the async helpers catch every exception from a delegate and hand it back through the ValueTask.
+[src/DotMaybe/Maybe.Async.cs]
+dotnet_diagnostic.CA1031.severity = none

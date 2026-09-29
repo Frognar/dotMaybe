@@ -78,6 +78,6 @@ public sealed class MaybeJsonConverter<T> : JsonConverter<Maybe<T>>
     private static JsonTypeInfo<T> ValueInfo(JsonSerializerOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        return (JsonTypeInfo<T>)options.GetTypeInfo(typeof(T));
+        return options.GetTypeInfo<T>();
     }
 }

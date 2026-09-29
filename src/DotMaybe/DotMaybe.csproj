@@ -8,6 +8,9 @@
     <!-- Trimming, AOT and single-file analyzers: reflection that breaks AOT fails the build. -->
     <IsAotCompatible>true</IsAotCompatible>
 
+    <!-- Every analyzer rule as a warning (so an error), for the library only. Exceptions: .editorconfig. -->
+    <AnalysisLevel>latest-all</AnalysisLevel>
+
     <!-- Package -->
     <IsPackable>true</IsPackable>
     <PackageId>dotMaybe</PackageId>
@@ -35,6 +38,8 @@
 
   <ItemGroup>
     <PackageReference Include="MinVer" PrivateAssets="all" />
+    <!-- Public API tracking: PublicAPI.Shipped.txt / PublicAPI.Unshipped.txt next to this file (see CONTRIBUTING.md). -->
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

@@ -33,7 +33,7 @@ jobs:
           global-json-file: global.json
 
       - name: Build with the nightly profile
-        run: dotnet build tests/DotMaybe.PropertyTests/DotMaybe.PropertyTests.csproj --configuration Release -p:PropertyTestProfile=Nightly
+        run: dotnet build tests/DotMaybe.PropertyTests/DotMaybe.PropertyTests.csproj --configuration Release -p:PropertyTestProfile=Nightly -p:RestoreLockedMode=true
 
       - name: Run properties
         run: >-

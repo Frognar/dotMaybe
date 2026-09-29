@@ -39,7 +39,7 @@ jobs:
           global-json-file: global.json
 
       - name: Restore
-        run: dotnet restore dotMaybe.slnx
+        run: dotnet restore dotMaybe.slnx --locked-mode
 
       - name: Check formatting
         if: runner.os == 'Linux'
