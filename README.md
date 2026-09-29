@@ -137,6 +137,25 @@ var best = scores.Max();              // Some(3)
 There are no `<` or `>=` operators on purpose: `maybeAge >= 18` does not compile instead of quietly treating
 `none` as the smallest age. Compare explicitly, for example `maybeAge.Filter(age => age >= 18)`.
 
+### JSON
+
+`System.Text.Json` works without configuration: a value is written as itself and `none` as `null`.
+
+```csharp
+record Profile(string Name, Maybe<string> Nickname, Maybe<int> Age);
+
+JsonSerializer.Serialize(new Profile("Ada", none, 36));
+// {"Name":"Ada","Nickname":null,"Age":36}
+
+JsonSerializer.Deserialize<Profile>("""{"Name":"Ada"}""");
+// Profile { Name = Ada, Nickname = None, Age = None }   (missing and null properties are none)
+```
+
+- To leave out properties without a value, use `DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault`.
+- Trimming and Native AOT: with a source-generated `JsonSerializerContext`, list the value types too
+  (`[JsonSerializable(typeof(int))]` next to `[JsonSerializable(typeof(Maybe<int>))]`).
+- A nested `Some(None)` cannot be told apart from `none` as `null`, so writing it throws `JsonException`.
+
 ### Async
 
 Every operation has an async counterpart that takes Task-returning delegates and returns a `ValueTask`:
