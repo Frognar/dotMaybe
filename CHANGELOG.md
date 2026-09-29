@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.10](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.9...v2.0.0-alpha.10) (2026-09-29)
+
+
+### Features
+
+* implement ordering for Maybe values and update tests ([#20](https://github.com/Frognar/dotMaybe/issues/20)) ([94c75f6](https://github.com/Frognar/dotMaybe/commit/94c75f651c2a92f003fdcf313c617c46f077944f))
+
 ## [2.0.0-alpha.9](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.8...v2.0.0-alpha.9) (2026-09-29)
 
 
