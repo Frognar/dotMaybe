@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-beta.1](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.10...v2.0.0-beta.1) (2026-09-29)
+
+
+### Features
+
+* add JSON support for Maybe&lt;T&gt; with `System.Text.Json` ([#22](https://github.com/Frognar/dotMaybe/issues/22)) ([37d8fe0](https://github.com/Frognar/dotMaybe/commit/37d8fe09f0778ed85aa5a78fb55fe6a2398d1dbd))
+
 ## [2.0.0-alpha.10](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.9...v2.0.0-alpha.10) (2026-09-29)
 
 
