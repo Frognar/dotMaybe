@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using static DotMaybe.Prelude;
@@ -33,6 +34,7 @@ namespace DotMaybe;
 /// </para>
 /// </remarks>
 [Union]
+[DebuggerDisplay("{ToString(),nq}")]
 public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<Maybe<T>>
     where T : notnull
 {

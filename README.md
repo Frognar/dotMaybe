@@ -124,6 +124,19 @@ string? backToNull = name.ToNullable();                              // Maybe<st
 Nothing here throws for a missing value: an empty sequence, a missing key, text that does not parse and `null`
 all give `none`.
 
+### Ordering
+
+Maybes compare like `Option` in F#: `none` first, then the values in their own order.
+
+```csharp
+Maybe<int>[] scores = [3, none, 1];
+var sorted = scores.Order();          // None, Some(1), Some(3)
+var best = scores.Max();              // Some(3)
+```
+
+There are no `<` or `>=` operators on purpose: `maybeAge >= 18` does not compile instead of quietly treating
+`none` as the smallest age. Compare explicitly, for example `maybeAge.Filter(age => age >= 18)`.
+
 ### Async
 
 Every operation has an async counterpart that takes Task-returning delegates and returns a `ValueTask`:
