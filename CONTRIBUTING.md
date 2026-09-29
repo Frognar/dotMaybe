@@ -55,6 +55,33 @@ commit message, so a `Release-As:` footer would be lost. Set the version in `rel
 After that release is published, remove `release-as` in a follow-up PR; later versions then count up on their own
 (`2.0.0-beta.2`, ...). For `2.0.0` itself, set `"release-as": "2.0.0"` and `"prerelease": false`.
 
+## Public API
+
+The public API of `src/DotMaybe` is recorded in `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt`
+(Microsoft.CodeAnalysis.PublicApiAnalyzers). A public member that is not listed fails the build (RS0016), and so does
+a listed member that no longer exists (RS0017). Every API change therefore shows up in the pull request diff.
+
+- New or changed API goes to `PublicAPI.Unshipped.txt`. Let the tooling write the lines:
+  `dotnet format analyzers src/DotMaybe/DotMaybe.csproj --diagnostics RS0016 --severity warn`
+  (or the IDE's *Add to public API* fix for the whole project).
+- After a release, move the lines from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt`.
+- Removing or changing a shipped line is a breaking change: it needs a major version.
+
+The library also builds with `AnalysisLevel latest-all`. Rules that conflict with deliberate design decisions are
+switched off in `.editorconfig`, each with its reason.
+
+## Dependencies and lock files
+
+Every project has a `packages.lock.json`, and CI restores with `--locked-mode`, so a dependency changes only through
+a commit. After changing a version in `Directory.Packages.props` or adding a project, refresh the lock files and
+commit them:
+
+```bash
+dotnet restore dotMaybe.slnx --force-evaluate
+```
+
+Dependabot updates the lock files together with the versions.
+
 ## Updating the .NET SDK (RC1 → RC2 → GA)
 
 1. Bump `sdk.version` in `global.json` to the exact SDK version.

@@ -9,6 +9,9 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <Deterministic>true</Deterministic>
 
+    <!-- packages.lock.json in every project; CI restores with locked mode, so dependencies change only on purpose. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
     <Authors>Frognar</Authors>
     <Copyright>Copyright (c) Frognar</Copyright>
     <RepositoryUrl>https://github.com/Frognar/dotMaybe</RepositoryUrl>
