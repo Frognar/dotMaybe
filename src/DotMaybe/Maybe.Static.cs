@@ -4,7 +4,7 @@ namespace DotMaybe;
 /// Functions on maybes that cannot be members of <see cref="Maybe{T}"/>, because they need a more specific shape
 /// of maybe (for example a maybe of a maybe) or create maybes from other types.
 /// </summary>
-public static class Maybe
+public static partial class Maybe
 {
     /// <summary>
     /// Removes one level of nesting: <c>Some(Some(x))</c> becomes <c>Some(x)</c>; <c>Some(None)</c> and

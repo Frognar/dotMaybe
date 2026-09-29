@@ -291,4 +291,10 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
     /// </summary>
     /// <returns>A text representation of this maybe.</returns>
     public override string ToString() => _isSome ? $"Some({_value})" : "None";
+
+    internal bool TryGetSome([MaybeNullWhen(false)] out T value)
+    {
+        value = _value;
+        return _isSome;
+    }
 }
