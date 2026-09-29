@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-alpha.9](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.8...v2.0.0-alpha.9) (2026-09-29)
+
+
+### Features
+
+* add sequence, traverse, interop, and collection helpers ([#18](https://github.com/Frognar/dotMaybe/issues/18)) ([7eb72c5](https://github.com/Frognar/dotMaybe/commit/7eb72c5b29173cdcb2d7f049f8d8a1ebca78994c))
+
 ## [2.0.0-alpha.8](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.7...v2.0.0-alpha.8) (2026-09-28)
 
 
