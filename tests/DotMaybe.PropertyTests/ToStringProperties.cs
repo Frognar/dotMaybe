@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using FsCheck.Xunit;
+using static DotMaybe.Prelude;
 
 namespace DotMaybe.PropertyTests;
 
@@ -20,6 +22,26 @@ public sealed class ToStringProperties
     {
         Assert.Equal("None", Maybes.Empty<int>().ToString());
         Assert.Equal("None", default(Maybe<string>).ToString());
+    }
+
+    [Fact]
+    public void The_None_value_is_shown_as_None()
+    {
+        // A record struct would print "None { }" by default.
+        Assert.Equal("None", none.ToString());
+        Assert.Equal("None", default(None).ToString());
+        Assert.Equal("None", $"{none}");
+    }
+
+    [Fact]
+    public void The_debugger_shows_the_same_text_without_quotes()
+    {
+        var display = typeof(Maybe<int>)
+            .GetCustomAttributes(typeof(DebuggerDisplayAttribute), inherit: false)
+            .Cast<DebuggerDisplayAttribute>()
+            .Single();
+
+        Assert.Equal("{ToString(),nq}", display.Value);
     }
 
     [Fact]

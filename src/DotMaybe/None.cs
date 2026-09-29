@@ -15,4 +15,11 @@ namespace DotMaybe;
 /// </code>
 /// To create an empty <see cref="Maybe{T}"/>, use <see cref="Prelude.none"/>.
 /// </remarks>
-public readonly record struct None;
+public readonly record struct None
+{
+    /// <summary>
+    /// Returns <c>None</c>.
+    /// </summary>
+    /// <returns>A text representation of this None.</returns>
+    public override string ToString() => "None";
+}

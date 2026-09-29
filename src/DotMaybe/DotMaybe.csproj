@@ -5,6 +5,9 @@
     <RootNamespace>DotMaybe</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
+    <!-- Trimming, AOT and single-file analyzers: reflection that breaks AOT fails the build. -->
+    <IsAotCompatible>true</IsAotCompatible>
+
     <!-- Package -->
     <IsPackable>true</IsPackable>
     <PackageId>dotMaybe</PackageId>

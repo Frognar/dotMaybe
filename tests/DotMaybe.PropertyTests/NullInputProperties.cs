@@ -48,6 +48,15 @@ public sealed class NullInputProperties
 
     [Theory]
     [MemberData(nameof(MaybesMadeFromNull))]
+    public void It_is_ordered_as_None(string madeBy, Maybe<string> fromNull)
+    {
+        Assert.True(fromNull.CompareTo(Maybes.Empty<string>()) == 0, madeBy);
+        Assert.True(fromNull.CompareTo(Maybes.Some("value")) < 0, madeBy);
+        Assert.True(Maybes.Some("value").CompareTo(fromNull) > 0, madeBy);
+    }
+
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
     public void It_is_shown_as_None(string madeBy, Maybe<string> fromNull)
     {
         _ = madeBy;
