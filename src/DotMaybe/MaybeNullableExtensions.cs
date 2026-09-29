@@ -16,7 +16,7 @@ public static class MaybeValueTypeExtensions
     /// <param name="maybe">The maybe.</param>
     /// <returns>The value, or <see langword="null"/>.</returns>
     public static T? ToNullable<T>(this Maybe<T> maybe)
-        where T : struct => maybe.Match<T?>(v => v, () => null);
+        where T : struct => maybe.TryGetSome(out var value) ? value : null;
 }
 
 /// <summary>
