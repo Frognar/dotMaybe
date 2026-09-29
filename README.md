@@ -106,6 +106,24 @@ port.Iter(Console.WriteLine);                                         // side ef
 Maybe<string> shown = port.Tap(Console.WriteLine).Map(p => $":{p}");  // side effect inside a chain
 ```
 
+### Collections and interop
+
+```csharp
+IEnumerable<int> valid = texts.Choose(Maybe.Parse<int>);            // the numbers that parse, lazily
+Maybe<IReadOnlyList<int>> all = texts.Traverse(Maybe.Parse<int>);   // every number, or none
+Maybe<IReadOnlyList<int>> both = new[] { a, b }.Sequence();         // Maybe<int>[] → all values, or none
+
+Maybe<User> admin = users.FirstOrNone(user => user.IsAdmin);
+Maybe<User> owner = users.SingleOrNone(user => user.IsOwner);       // none for zero or several
+Maybe<int> age = ages.GetValueOrNone("Ada");
+
+Maybe<int> fromNullable = Maybe.FromNullable(nullableNumber);        // int? → Maybe<int>
+string? backToNull = name.ToNullable();                              // Maybe<string> → string?
+```
+
+Nothing here throws for a missing value: an empty sequence, a missing key, text that does not parse and `null`
+all give `none`.
+
 ### Async
 
 Every operation has an async counterpart that takes Task-returning delegates and returns a `ValueTask`:

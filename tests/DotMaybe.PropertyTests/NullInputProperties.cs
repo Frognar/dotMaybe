@@ -158,6 +158,17 @@ public sealed class NullInputProperties
 
     [Theory]
     [MemberData(nameof(MaybesMadeFromNull))]
+    public void Collections_and_nullables_treat_it_as_None(string madeBy, Maybe<string> fromNull)
+    {
+        Maybe<string>[] maybes = [fromNull, Maybes.Some("value")];
+
+        Assert.Equal(new[] { "value" }, maybes.Choose());
+        Assert.True(new[] { fromNull }.Sequence().Match(_ => false, () => true), madeBy);
+        Assert.Null(fromNull.ToNullable());
+    }
+
+    [Theory]
+    [MemberData(nameof(MaybesMadeFromNull))]
     public async Task Async_queries_over_it_give_None_without_waiting(string madeBy, Maybe<string> fromNull)
     {
         var calls = 0;
