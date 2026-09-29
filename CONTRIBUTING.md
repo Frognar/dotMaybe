@@ -44,15 +44,16 @@ passed, restart the window on the policy list, then merge.
 The release PR is opened by `GITHUB_TOKEN`, so CI does not run on it and its required checks never report.
 Merge it with the ruleset bypass (see below), or set up `RELEASE_PLEASE_TOKEN` instead.
 
-Moving to the next pre-release phase or to the final release: add a footer to a commit on `main`, e.g.
+Moving to the next pre-release phase or to the final release: pull requests are squash-merged with the title as the
+commit message, so a `Release-As:` footer would be lost. Set the version in `release-please-config.json` instead:
 
-```text
-chore: start beta
-
-Release-As: 2.0.0-beta.1
+```json
+"prerelease-type": "beta",
+"packages": { ".": { "changelog-path": "CHANGELOG.md", "release-as": "2.0.0-beta.1" } }
 ```
 
-For `2.0.0` itself, also set `"prerelease": false` in `release-please-config.json`.
+After that release is published, remove `release-as` in a follow-up PR; later versions then count up on their own
+(`2.0.0-beta.2`, ...). For `2.0.0` itself, set `"release-as": "2.0.0"` and `"prerelease": false`.
 
 ## Updating the .NET SDK (RC1 → RC2 → GA)
 
