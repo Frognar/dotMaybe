@@ -82,6 +82,23 @@ dotnet restore dotMaybe.slnx --force-evaluate
 
 Dependabot updates the lock files together with the versions.
 
+## Performance
+
+D18: for a value type `T`, working with `Maybe<T>` allocates nothing. `AllocationProperties` checks it on every build
+with `GC.GetAllocatedBytesForCurrentThread`: every operation runs with `static` lambdas after a warm-up, and must
+allocate 0 bytes. In library code this means no lambdas that capture (`Bind(v => other.Map(...))` allocates a closure
+on every call); read the fields or use `TryGetSome` instead.
+
+Benchmarks are for measuring by hand, not part of CI (CI only builds them):
+
+```bash
+dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*'
+dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*Chain*' --inProcess
+```
+
+`--inProcess` runs without generating a separate project, which helps while BenchmarkDotNet does not know a new
+.NET version yet.
+
 ## Updating the .NET SDK (RC1 → RC2 → GA)
 
 1. Bump `sdk.version` in `global.json` to the exact SDK version.
