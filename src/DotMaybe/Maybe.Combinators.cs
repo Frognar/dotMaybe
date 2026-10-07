@@ -1,3 +1,5 @@
+using static DotMaybe.Prelude;
+
 namespace DotMaybe;
 
 /// <content>
@@ -36,7 +38,15 @@ public readonly partial struct Maybe<T>
     /// <param name="other">The other maybe.</param>
     /// <returns>Both values as a pair, or <see cref="None"/>.</returns>
     public Maybe<(T, TOther)> Zip<TOther>(Maybe<TOther> other)
-        where TOther : notnull => Bind(v1 => other.Map(v2 => (v1, v2)));
+        where TOther : notnull
+    {
+        if (!_isSome || !other._isSome)
+        {
+            return none;
+        }
+
+        return (_value, other._value);
+    }
 
     /// <summary>
     /// Combines this value with the value of <paramref name="other"/>; <see cref="None"/> when either has none.
@@ -56,7 +66,12 @@ public readonly partial struct Maybe<T>
         where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(combine);
-        return Bind(v1 => other.Map(v2 => combine(v1, v2)));
+        if (!_isSome || !other._isSome)
+        {
+            return none;
+        }
+
+        return combine(_value, other._value);
     }
 
     /// <summary>

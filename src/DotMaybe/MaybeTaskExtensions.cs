@@ -1,3 +1,5 @@
+using static DotMaybe.Prelude;
+
 namespace DotMaybe;
 
 /// <summary>
@@ -219,8 +221,11 @@ public static class MaybeTaskExtensions
         ArgumentNullException.ThrowIfNull(map);
         return MapAfter(source, map);
 
-        static async ValueTask<Maybe<TResult>> MapAfter(ValueTask<Maybe<T>> source, Func<T, TResult> map) =>
-            (await source.ConfigureAwait(false)).Map(map);
+        static async ValueTask<Maybe<TResult>> MapAfter(ValueTask<Maybe<T>> source, Func<T, TResult> map)
+        {
+            var maybe = await source.ConfigureAwait(false);
+            return maybe.TryGetSome(out var value) ? map(value) : none;
+        }
     }
 
     /// <summary>Awaits the source, then transforms the value with the asynchronous <paramref name="map"/>.</summary>
@@ -255,8 +260,11 @@ public static class MaybeTaskExtensions
         ArgumentNullException.ThrowIfNull(bind);
         return BindAfter(source, bind);
 
-        static async ValueTask<Maybe<TResult>> BindAfter(ValueTask<Maybe<T>> source, Func<T, Maybe<TResult>> bind) =>
-            (await source.ConfigureAwait(false)).Bind(bind);
+        static async ValueTask<Maybe<TResult>> BindAfter(ValueTask<Maybe<T>> source, Func<T, Maybe<TResult>> bind)
+        {
+            var maybe = await source.ConfigureAwait(false);
+            return maybe.TryGetSome(out var value) ? bind(value) : none;
+        }
     }
 
     /// <summary>Awaits the source, then continues with the asynchronous <paramref name="bind"/>.</summary>
@@ -291,8 +299,11 @@ public static class MaybeTaskExtensions
         ArgumentNullException.ThrowIfNull(predicate);
         return FilterAfter(source, predicate);
 
-        static async ValueTask<Maybe<T>> FilterAfter(ValueTask<Maybe<T>> source, Func<T, bool> predicate) =>
-            (await source.ConfigureAwait(false)).Filter(predicate);
+        static async ValueTask<Maybe<T>> FilterAfter(ValueTask<Maybe<T>> source, Func<T, bool> predicate)
+        {
+            var maybe = await source.ConfigureAwait(false);
+            return maybe.TryGetSome(out var value) && predicate(value) ? value : none;
+        }
     }
 
     /// <summary>Awaits the source, then keeps the value only when the asynchronous <paramref name="predicate"/> holds.</summary>
@@ -386,8 +397,11 @@ public static class MaybeTaskExtensions
         ArgumentNullException.ThrowIfNull(fallback);
         return OrDefaultAfter(source, fallback);
 
-        static async ValueTask<T> OrDefaultAfter(ValueTask<Maybe<T>> source, T fallback) =>
-            (await source.ConfigureAwait(false)).OrDefault(fallback);
+        static async ValueTask<T> OrDefaultAfter(ValueTask<Maybe<T>> source, T fallback)
+        {
+            var maybe = await source.ConfigureAwait(false);
+            return maybe.TryGetSome(out var value) ? value : fallback;
+        }
     }
 
     /// <summary>Awaits the source, then returns the value or the result of <paramref name="fallback"/>.</summary>
@@ -402,8 +416,11 @@ public static class MaybeTaskExtensions
         ArgumentNullException.ThrowIfNull(fallback);
         return OrDefaultAfter(source, fallback);
 
-        static async ValueTask<T> OrDefaultAfter(ValueTask<Maybe<T>> source, Func<T> fallback) =>
-            (await source.ConfigureAwait(false)).OrDefault(fallback);
+        static async ValueTask<T> OrDefaultAfter(ValueTask<Maybe<T>> source, Func<T> fallback)
+        {
+            var maybe = await source.ConfigureAwait(false);
+            return maybe.TryGetSome(out var value) ? value : fallback();
+        }
     }
 
     /// <summary>Awaits the source, then returns the value or awaits <paramref name="fallback"/>.</summary>
@@ -418,7 +435,10 @@ public static class MaybeTaskExtensions
         ArgumentNullException.ThrowIfNull(fallback);
         return OrDefaultAfter(source, fallback);
 
-        static async ValueTask<T> OrDefaultAfter(ValueTask<Maybe<T>> source, Func<Task<T>> fallback) =>
-            await (await source.ConfigureAwait(false)).OrDefaultAsync(fallback).ConfigureAwait(false);
+        static async ValueTask<T> OrDefaultAfter(ValueTask<Maybe<T>> source, Func<Task<T>> fallback)
+        {
+            var maybe = await source.ConfigureAwait(false);
+            return maybe.TryGetSome(out var value) ? value : await fallback().ConfigureAwait(false);
+        }
     }
 }

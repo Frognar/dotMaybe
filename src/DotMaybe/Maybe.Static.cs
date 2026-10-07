@@ -1,3 +1,5 @@
+using static DotMaybe.Prelude;
+
 namespace DotMaybe;
 
 /// <summary>
@@ -17,5 +19,5 @@ public static partial class Maybe
     /// <param name="nested">The maybe of a maybe.</param>
     /// <returns>The inner maybe, or <see cref="None"/>.</returns>
     public static Maybe<T> Flatten<T>(this Maybe<Maybe<T>> nested)
-        where T : notnull => nested.Bind(maybe => maybe);
+        where T : notnull => nested.TryGetSome(out var value) ? value : none;
 }

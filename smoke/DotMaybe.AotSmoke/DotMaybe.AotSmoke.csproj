@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Native AOT smoke test, published and run by the "Native AOT" job in CI:
+      dotnet publish smoke/DotMaybe.AotSmoke -c Release -r linux-x64 -o artifacts/aot && artifacts/aot/DotMaybe.AotSmoke
+    Trimming and AOT warnings are errors here (TreatWarningsAsErrors), so reflection in the library fails the publish.
+    Not part of dotMaybe.slnx: it is only restored for a runtime identifier when published.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/DotMaybe/DotMaybe.csproj" />
+  </ItemGroup>
+
+</Project>

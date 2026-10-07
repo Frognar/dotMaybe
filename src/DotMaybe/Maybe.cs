@@ -245,7 +245,17 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
     {
         ArgumentNullException.ThrowIfNull(selector);
         ArgumentNullException.ThrowIfNull(resultSelector);
-        return Bind(v1 => selector(v1).Map(v2 => resultSelector(v1, v2)));
+        if (!_isSome)
+        {
+            return none;
+        }
+
+        if (selector(_value).TryGetSome(out var selected))
+        {
+            return resultSelector(_value, selected);
+        }
+
+        return none;
     }
 
     /// <summary>
@@ -254,7 +264,11 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
     /// <param name="predicate">The condition the value must satisfy.</param>
     /// <returns>This maybe when the value satisfies <paramref name="predicate"/>; otherwise <see cref="None"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="predicate"/> is null.</exception>
-    public Maybe<T> Where(Func<T, bool> predicate) => Filter(predicate);
+    public Maybe<T> Where(Func<T, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        return Filter(predicate);
+    }
 
     /// <summary>
     /// Compares two maybes: both <see cref="None"/>, or both holding equal values.

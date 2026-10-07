@@ -2,9 +2,15 @@
   <Folder Name="/src/">
     <Project Path="src/DotMaybe/DotMaybe.csproj" />
   </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/DotMaybe.Benchmarks/DotMaybe.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DotMaybe.CompilerContractTests/DotMaybe.CompilerContractTests.csproj" />
     <Project Path="tests/DotMaybe.PropertyTests/DotMaybe.PropertyTests.csproj" />
+  </Folder>
+  <Folder Name="/smoke/">
+    <Project Path="smoke/DotMaybe.AotSmoke/DotMaybe.AotSmoke.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

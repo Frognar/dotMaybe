@@ -82,6 +82,41 @@ dotnet restore dotMaybe.slnx --force-evaluate
 
 Dependabot updates the lock files together with the versions.
 
+## Performance
+
+D18: for a value type `T`, working with `Maybe<T>` allocates nothing. `AllocationProperties` checks it on every build
+with `GC.GetAllocatedBytesForCurrentThread`: every operation runs with `static` lambdas after a warm-up, and must
+allocate 0 bytes. In library code this means no lambdas that capture (`Bind(v => other.Map(...))` allocates a closure
+on every call); read the fields or use `TryGetSome` instead.
+
+Benchmarks are for measuring by hand, not part of CI (CI only builds them):
+
+```bash
+dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*'
+dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*Chain*' --inProcess
+```
+
+`--inProcess` runs without generating a separate project, which helps while BenchmarkDotNet does not know a new
+.NET version yet.
+
+## Quality checks
+
+- **Mutation testing** (nightly job *Mutation testing*): Stryker.NET mutates the library and runs the property tests
+  on Microsoft Testing Platform. Below the `break` threshold in `tests/DotMaybe.PropertyTests/stryker-config.json`
+  the job fails; the HTML report is attached to the run. Locally:
+
+  ```bash
+  dotnet tool restore
+  cd tests/DotMaybe.PropertyTests && dotnet stryker
+  ```
+
+  A surviving mutant means a behavior no property pins down: add a property, or accept it and say why in the PR.
+- **Native AOT** (CI job *Native AOT smoke test*): `smoke/DotMaybe.AotSmoke` is published with Native AOT and run. Any
+  trimming or AOT warning from the library fails the publish, and the program checks that the API, async code and
+  JSON through a source-generated context work in the native binary.
+- **CodeQL** (workflow *CodeQL*): static analysis on pull requests, on `main` and weekly; findings are listed under
+  *Security > Code scanning*.
+
 ## Updating the .NET SDK (RC1 → RC2 → GA)
 
 1. Bump `sdk.version` in `global.json` to the exact SDK version.
