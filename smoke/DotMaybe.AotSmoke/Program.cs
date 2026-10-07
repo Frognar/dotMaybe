@@ -48,7 +48,7 @@ Check(
     JsonSerializer.Deserialize("""{"Note":null}""", SmokeJsonContext.Default.Order) == new Order(none, none),
     "JSON missing and null properties");
 Check(ThrowsJsonException(static () => JsonSerializer.Serialize(
-    Maybe<Maybe<int>>.IUnionMembers.Create(nothing),
+    Maybe<Maybe<int>>.IUnionMembers.Create(default(Maybe<int>)),
     typeof(Maybe<Maybe<int>>),
     SmokeJsonContext.Default)), "JSON refuses Some(None)");
 

@@ -9,6 +9,9 @@
     <Project Path="tests/DotMaybe.CompilerContractTests/DotMaybe.CompilerContractTests.csproj" />
     <Project Path="tests/DotMaybe.PropertyTests/DotMaybe.PropertyTests.csproj" />
   </Folder>
+  <Folder Name="/smoke/">
+    <Project Path="smoke/DotMaybe.AotSmoke/DotMaybe.AotSmoke.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
