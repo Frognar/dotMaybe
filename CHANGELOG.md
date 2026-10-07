@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0-beta.2](https://github.com/Frognar/dotMaybe/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-10-07)
+
+
+### Performance Improvements
+
+* allocate nothing for value-type maybes and add quality checks ([#28](https://github.com/Frognar/dotMaybe/issues/28)) ([dbc61bf](https://github.com/Frognar/dotMaybe/commit/dbc61bf01b5cf4d3db74a05e65706b04f36d4a05))
+
 ## [2.0.0-beta.1](https://github.com/Frognar/dotMaybe/compare/v2.0.0-alpha.10...v2.0.0-beta.1) (2026-09-29)
 
 
