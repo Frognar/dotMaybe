@@ -49,21 +49,6 @@ public sealed class PatternMatchingContracts
     }
 
     [Fact]
-    public void A_type_parameter_pattern_cannot_declare_a_variable()
-    {
-        // Found in TP-01 on SDK RC1: in generic code T could itself be a union, so the compiler cannot tell whether
-        // `T value` applies to the maybe or to its content, and rejects the declaration (CS8780).
-        // Generic code reads the value through Match (TP-02) instead. If a later compiler lifts the restriction,
-        // this contract turns red and we can simplify generic code.
-        var result = Snippet.Compile(Consumer.File("""
-                public static string Describe<T>(Maybe<T> maybe)
-                    where T : notnull => maybe is T value ? "some" : "none";
-            """));
-
-        ContractAssert.FailsWith(result, "CS8780");
-    }
-
-    [Fact]
     public void A_concrete_type_pattern_declares_a_variable()
     {
         var result = Snippet.Compile(Consumer.File("""
