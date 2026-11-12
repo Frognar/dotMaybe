@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.0.0](https://github.com/Frognar/dotMaybe/compare/v2.0.0-beta.2...v2.0.0) (2026-11-12)
+
+### Highlights
+
+A ground-up rewrite for .NET 11 and C# 15 unions. The 1.x line is retired.
+
+- `Maybe<T>` is a C# 15 union with exactly two cases, `T` and `None`: values convert implicitly, a `switch` over
+  both is exhaustive, and pattern matching works in generic code too.
+- No invalid states: `default(Maybe<T>)` is `None`, a `null` never becomes a value, and there is no `.Value` or
+  any other throwing accessor.
+- Functional API: `Match`, `OrDefault`, `Map`, `Bind`, `Filter`, `OrElse`, `Zip`, `Fold`, `Iter`, `Tap`,
+  `Flatten`, and query syntax (`from`, `where`, `let`, `select`).
+- Collections and interop: `Choose`, `Traverse`, `Sequence`, `FirstOrNone`, `SingleOrNone`, `GetValueOrNone`,
+  `FromNullable`, `ToNullable` and `Maybe.Parse<T>`.
+- Ordering like `Option` in F# (`None` first), with no `<`/`>` operators on purpose.
+- `System.Text.Json` without configuration: a value is written as itself and `None` as `null`. Works with
+  source-generated contexts.
+- Async: `*Async` counterparts returning `ValueTask`, plus pipelines and query syntax over `Task<Maybe<T>>` and
+  `ValueTask<Maybe<T>>` with a single `await`.
+- Zero allocations for value-type `T` (checked on every build); trimming and Native AOT compatible.
+- Requires .NET 11.
+
+### Performance Improvements
+
+* allocate nothing in async queries with two `from` clauses ([590045a](https://github.com/Frognar/dotMaybe/commit/590045a3c000f49d8969e7c8bbe8c8c018ddd424))
+
 ## [2.0.0-beta.2](https://github.com/Frognar/dotMaybe/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-10-07)
 
 
