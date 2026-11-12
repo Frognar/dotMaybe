@@ -8,7 +8,7 @@ internal static class MaybeAssert
     public static void HoldsValue<T>(T expected, Maybe<T> actual)
         where T : notnull
     {
-        if (Maybes.TryGetValue(actual, out var value))
+        if (actual is T value)
         {
             Assert.Equal(expected, value);
             return;

@@ -92,12 +92,13 @@ on every call); read the fields or use `TryGetSome` instead.
 Benchmarks are for measuring by hand, not part of CI (CI only builds them):
 
 ```bash
-dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*'
+dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*' --inProcess
 dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*Chain*' --inProcess
 ```
 
-`--inProcess` runs without generating a separate project, which helps while BenchmarkDotNet does not know a new
-.NET version yet.
+`--inProcess` runs without generating a separate project. It is required while BenchmarkDotNet does not know the
+.NET version: BenchmarkDotNet 0.15.8 fails on .NET 11 without it (`GetRuntimeVersion not implemented for
+NotRecognized`). Drop it once a BenchmarkDotNet release supports .NET 11.
 
 ## Quality checks
 

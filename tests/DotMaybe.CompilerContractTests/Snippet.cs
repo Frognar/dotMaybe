@@ -12,7 +12,7 @@ internal static class Snippet
 {
     private static readonly Lazy<ImmutableArray<MetadataReference>> References = new(LoadReferences);
 
-    private static readonly CSharpParseOptions ParseOptions = new(CSharp15());
+    private static readonly CSharpParseOptions ParseOptions = new(LanguageVersion.CSharp15);
 
     private static readonly CSharpCompilationOptions CompilationOptions =
         new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
@@ -42,11 +42,6 @@ internal static class Snippet
 
         return new CompilationResult(source, diagnostics);
     }
-
-    private static LanguageVersion CSharp15() =>
-        LanguageVersionFacts.TryParse("15", out var version)
-            ? version
-            : throw new InvalidOperationException("The SDK's compiler does not know C# 15. Check global.json.");
 
     // The running test host already loads the .NET 11 framework and DotMaybe, so its trusted platform
     // assemblies are exactly what a consumer compiles against.

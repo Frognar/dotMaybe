@@ -25,6 +25,8 @@ public sealed class AllocationProperties
         Allocations.AssertNone("Tap", () => _ = maybe.Tap(static _ => { }));
         Allocations.AssertNone("ToNullable", () => _ = maybe.ToNullable());
         Allocations.AssertNone("switch", () => _ = maybe switch { int value => value, None => 0 });
+        Allocations.AssertNone("is T (generic)", () => _ = IsSome(maybe));
+        Allocations.AssertNone("switch (generic)", () => _ = ValueOr(maybe, 0));
     }
 
     [Property(Skip = Allocations.SkipInDebug)]
@@ -124,7 +126,24 @@ public sealed class AllocationProperties
         Allocations.AssertNone(
             "async query",
             () => _ = (from value in fromValueTask where value > 0 select value + 1).IsCompleted);
+        Allocations.AssertNone(
+            "async query with two from (ValueTask)",
+            () => _ = (from value in fromValueTask from half in Half(value) select value + half).IsCompleted);
+        Allocations.AssertNone(
+            "async query with two from (Task)",
+            () => _ = (from value in fromTask from half in Half(value) select value + half).IsCompleted);
     }
 
     private static Maybe<int> Half(int value) => value % 2 == 0 ? value / 2 : none;
+
+    // Pattern matching through a type parameter, as consumers write it in generic code since the .NET 11 GA compiler.
+    private static bool IsSome<T>(Maybe<T> maybe)
+        where T : notnull => maybe is T;
+
+    private static T ValueOr<T>(Maybe<T> maybe, T fallback)
+        where T : notnull => maybe switch
+        {
+            T value => value,
+            None => fallback,
+        };
 }

@@ -1,3 +1,5 @@
+using static DotMaybe.Prelude;
+
 namespace DotMaybe;
 
 /// <summary>
@@ -98,8 +100,17 @@ public static class MaybeTaskQueryExtensions
     {
         ArgumentNullException.ThrowIfNull(selector);
         ArgumentNullException.ThrowIfNull(resultSelector);
-        return source.BindAsync(async v1 =>
-            (await selector(v1).ConfigureAwait(false)).Map(v2 => resultSelector(v1, v2)));
+        return source.TryGetSome(out var value)
+            ? Project(value, selector, resultSelector)
+            : ValueTask.FromResult<Maybe<TResult>>(none);
+
+        static async ValueTask<Maybe<TResult>> Project(
+            T value,
+            Func<T, Task<Maybe<TIntermediate>>> selector,
+            Func<T, TIntermediate, TResult> resultSelector) =>
+            (await selector(value).ConfigureAwait(false)).TryGetSome(out var selected)
+                ? resultSelector(value, selected)
+                : none;
     }
 
     /// <summary>
@@ -124,7 +135,7 @@ public static class MaybeTaskQueryExtensions
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(selector);
         ArgumentNullException.ThrowIfNull(resultSelector);
-        return source.BindAsync(v1 => selector(v1).Map(v2 => resultSelector(v1, v2)));
+        return new ValueTask<Maybe<T>>(source).SelectMany(selector, resultSelector);
     }
 
     /// <summary>
@@ -149,8 +160,7 @@ public static class MaybeTaskQueryExtensions
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(selector);
         ArgumentNullException.ThrowIfNull(resultSelector);
-        return source.BindAsync(async v1 =>
-            (await selector(v1).ConfigureAwait(false)).Map(v2 => resultSelector(v1, v2)));
+        return new ValueTask<Maybe<T>>(source).SelectMany(selector, resultSelector);
     }
 
     /// <inheritdoc cref="SelectMany{T, TIntermediate, TResult}(Task{Maybe{T}}, Func{T, Maybe{TIntermediate}}, Func{T, TIntermediate, TResult})"/>
@@ -164,7 +174,13 @@ public static class MaybeTaskQueryExtensions
     {
         ArgumentNullException.ThrowIfNull(selector);
         ArgumentNullException.ThrowIfNull(resultSelector);
-        return source.BindAsync(v1 => selector(v1).Map(v2 => resultSelector(v1, v2)));
+        return SelectManyAfter(source, selector, resultSelector);
+
+        static async ValueTask<Maybe<TResult>> SelectManyAfter(
+            ValueTask<Maybe<T>> source,
+            Func<T, Maybe<TIntermediate>> selector,
+            Func<T, TIntermediate, TResult> resultSelector) =>
+            (await source.ConfigureAwait(false)).SelectMany(selector, resultSelector);
     }
 
     /// <inheritdoc cref="SelectMany{T, TIntermediate, TResult}(Task{Maybe{T}}, Func{T, Task{Maybe{TIntermediate}}}, Func{T, TIntermediate, TResult})"/>
@@ -178,7 +194,12 @@ public static class MaybeTaskQueryExtensions
     {
         ArgumentNullException.ThrowIfNull(selector);
         ArgumentNullException.ThrowIfNull(resultSelector);
-        return source.BindAsync(async v1 =>
-            (await selector(v1).ConfigureAwait(false)).Map(v2 => resultSelector(v1, v2)));
+        return SelectManyAfter(source, selector, resultSelector);
+
+        static async ValueTask<Maybe<TResult>> SelectManyAfter(
+            ValueTask<Maybe<T>> source,
+            Func<T, Task<Maybe<TIntermediate>>> selector,
+            Func<T, TIntermediate, TResult> resultSelector) =>
+            await (await source.ConfigureAwait(false)).SelectMany(selector, resultSelector).ConfigureAwait(false);
     }
 }

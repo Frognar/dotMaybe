@@ -27,7 +27,7 @@ public static class MaybeArbitraries
 
     private static IEnumerable<Maybe<T>> Shrink<T>(Maybe<T> maybe, Arbitrary<T> values)
         where T : notnull =>
-        Maybes.TryGetValue(maybe, out var value)
+        maybe is T value
             ? values.Shrinker(value)
                 .Select(smaller => Maybes.Some(smaller))
                 .Prepend(Maybes.Empty<T>())
