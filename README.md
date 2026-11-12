@@ -59,7 +59,7 @@ var number = answer.OrDefault(0);
 var lazy = answer.OrDefault(() => ExpensiveFallback());
 ```
 
-In generic code use `Match`: C# does not allow `maybe is T value` when `T` is a type parameter.
+Pattern matching works in generic code too: `maybe is T value` reads the value when `T` is a type parameter.
 
 ### Transforming and chaining
 

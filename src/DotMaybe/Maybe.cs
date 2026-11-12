@@ -107,7 +107,7 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
     /// <paramref name="none"/> runs when there is none. Exactly one of them runs, exactly once.
     /// </summary>
     /// <remarks>
-    /// This is the way to read a value in generic code, where <c>maybe is T value</c> does not compile.
+    /// The expression form of <c>maybe switch { T value => ..., None => ... }</c>, convenient in lambdas and chains.
     /// </remarks>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="some">Produces the result from the value.</param>
