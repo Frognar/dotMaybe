@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0](https://github.com/Frognar/dotMaybe/compare/v2.0.0-beta.2...v2.0.0) (2026-11-12)
+
+
+### Performance Improvements
+
+* allocate nothing in async queries with two `from` clauses ([590045a](https://github.com/Frognar/dotMaybe/commit/590045a3c000f49d8969e7c8bbe8c8c018ddd424))
+
 ## [2.0.0-beta.2](https://github.com/Frognar/dotMaybe/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-10-07)
 
 
