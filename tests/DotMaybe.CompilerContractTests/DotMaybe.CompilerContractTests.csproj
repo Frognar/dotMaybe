@@ -6,7 +6,7 @@
 
   <!--
     The contracts compile snippets with the very compiler this SDK builds with (sdk/<version>/Roslyn/bincore),
-    so bumping global.json (RC1 -> RC2 -> GA) re-checks every contract against the new compiler.
+    so bumping global.json re-checks every contract against the new compiler.
     RoslynCoreAssembliesPath is set by the .NET SDK when it uses its own (Core) compiler, which is the default
     for `dotnet build` / `dotnet test`.
   -->

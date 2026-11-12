@@ -49,6 +49,19 @@ public sealed class PatternMatchingContracts
     }
 
     [Fact]
+    public void A_type_parameter_pattern_declares_a_variable()
+    {
+        // The RC1 compiler rejected `T value` in generic code (CS8780), because T could itself be a union.
+        // The .NET 11 GA compiler (SDK 11.0.100) accepts it and matches the content, as for a concrete type.
+        var result = Snippet.Compile(Consumer.File("""
+                public static string Describe<T>(Maybe<T> maybe)
+                    where T : notnull => maybe is T value ? $"some {value}" : "none";
+            """));
+
+        ContractAssert.CompilesCleanly(result);
+    }
+
+    [Fact]
     public void A_concrete_type_pattern_declares_a_variable()
     {
         var result = Snippet.Compile(Consumer.File("""

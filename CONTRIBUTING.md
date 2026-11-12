@@ -117,12 +117,14 @@ dotnet run -c Release --project benchmarks/DotMaybe.Benchmarks -- --filter '*Cha
 - **CodeQL** (workflow *CodeQL*): static analysis on pull requests, on `main` and weekly; findings are listed under
   *Security > Code scanning*.
 
-## Updating the .NET SDK (RC1 → RC2 → GA)
+## Updating the .NET SDK
 
 1. Bump `sdk.version` in `global.json` to the exact SDK version.
 2. Read the C# release notes for changes to unions.
 3. Run the compiler contract tests first. They are the ones that notice changes in union behavior.
-4. Update test dependencies if needed.
+4. Refresh the lock files (`dotnet restore dotMaybe.slnx --force-evaluate`): the SDK's implicit packages, such as
+   `Microsoft.NET.ILLink.Tasks`, follow its version.
+5. Update test dependencies if needed.
 
 ## One-time repository setup
 
