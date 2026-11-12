@@ -53,7 +53,9 @@ commit message, so a `Release-As:` footer would be lost. Set the version in `rel
 ```
 
 After that release is published, remove `release-as` in a follow-up PR; later versions then count up on their own
-(`2.0.0-beta.2`, ...). For `2.0.0` itself, set `"release-as": "2.0.0"` and `"prerelease": false`.
+(`2.0.0-beta.2`, ...). For `2.0.0` itself, set `"release-as": "2.0.0"` and `"prerelease": false`, and drop
+`"versioning": "prerelease"` and `"prerelease-type"`, so that later versions follow plain semantic versioning
+(`fix:` → 2.0.1, `feat:` → 2.1.0, a breaking change → 3.0.0).
 
 ## Public API
 
