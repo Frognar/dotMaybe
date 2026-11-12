@@ -6,8 +6,7 @@
   "prerelease": false,
   "packages": {
     ".": {
-      "changelog-path": "CHANGELOG.md",
-      "release-as": "2.0.0"
+      "changelog-path": "CHANGELOG.md"
     }
   }
 }
