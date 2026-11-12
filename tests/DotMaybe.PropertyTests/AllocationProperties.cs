@@ -10,7 +10,10 @@ namespace DotMaybe.PropertyTests;
 /// <remarks>
 /// Skipped in Debug builds (see <see cref="Allocations.SkipInDebug"/>); CI runs them in Release.
 /// Not covered on purpose: <c>ToString</c> (a string), sequences (<c>Choose</c>, <c>Sequence</c>, <c>FirstOrNone</c>
-/// over <c>IEnumerable&lt;T&gt;</c> allocate like LINQ), JSON, and async steps that really wait.
+/// over <c>IEnumerable&lt;T&gt;</c> allocate like LINQ), JSON, and async steps that really wait (the runtime
+/// allocates a state machine and a task for every await that does not complete synchronously, so 0 bytes cannot be
+/// promised there). Steps with Task-returning delegates are measured with tasks completed in advance
+/// (<see cref="CompletedOne"/> and friends), so any allocation comes from the library, not from the delegate.
 /// </remarks>
 public sealed class AllocationProperties
 {
@@ -132,7 +135,99 @@ public sealed class AllocationProperties
         Allocations.AssertNone(
             "async query with two from (Task)",
             () => _ = (from value in fromTask from half in Half(value) select value + half).IsCompleted);
+
+        Allocations.AssertNone(
+            "MatchAsync (ValueTask)",
+            () => _ = fromValueTask.MatchAsync(static value => value, static () => 0).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync (Task)",
+            () => _ = fromTask.MatchAsync(static value => value, static () => 0).IsCompleted);
+        Allocations.AssertNone(
+            "OrDefaultAsync(factory) (ValueTask)",
+            () => _ = fromValueTask.OrDefaultAsync(static () => 0).IsCompleted);
+        Allocations.AssertNone(
+            "OrDefaultAsync(factory) (Task)",
+            () => _ = fromTask.OrDefaultAsync(static () => 0).IsCompleted);
+        Allocations.AssertNone("BindAsync (Task)", () => _ = fromTask.BindAsync(static value => Half(value)).IsCompleted);
+        Allocations.AssertNone("FilterAsync (Task)", () => _ = fromTask.FilterAsync(static value => value > 0).IsCompleted);
+        Allocations.AssertNone(
+            "async query (Task)",
+            () => _ = (from value in fromTask where value > 0 select value + 1).IsCompleted);
     }
+
+    [Property(Skip = Allocations.SkipInDebug)]
+    public void Async_steps_with_completed_tasks_allocate_nothing(Maybe<int> maybe)
+    {
+        Allocations.AssertNone("MapAsync", () => _ = maybe.MapAsync(static _ => CompletedOne).IsCompleted);
+        Allocations.AssertNone("BindAsync", () => _ = maybe.BindAsync(static _ => CompletedSomeOne).IsCompleted);
+        Allocations.AssertNone("FilterAsync", () => _ = maybe.FilterAsync(static _ => CompletedTrue).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync(async, async)",
+            () => _ = maybe.MatchAsync(static _ => CompletedOne, static () => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync(async, sync)",
+            () => _ = maybe.MatchAsync(static _ => CompletedOne, static () => 0).IsCompleted);
+        Allocations.AssertNone(
+            "OrDefaultAsync(async factory)",
+            () => _ = maybe.OrDefaultAsync(static () => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "async query from a maybe",
+            () => _ = (from value in maybe from one in CompletedSomeOne select value + one).IsCompleted);
+    }
+
+    [Property(Skip = Allocations.SkipInDebug)]
+    public void Async_steps_on_completed_sources_with_completed_tasks_allocate_nothing(Maybe<int> maybe)
+    {
+        var fromValueTask = ValueTask.FromResult(maybe);
+        var fromTask = Task.FromResult(maybe);
+
+        Allocations.AssertNone(
+            "MapAsync (ValueTask)",
+            () => _ = fromValueTask.MapAsync(static _ => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "BindAsync (ValueTask)",
+            () => _ = fromValueTask.BindAsync(static _ => CompletedSomeOne).IsCompleted);
+        Allocations.AssertNone(
+            "FilterAsync (ValueTask)",
+            () => _ = fromValueTask.FilterAsync(static _ => CompletedTrue).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync(async, async) (ValueTask)",
+            () => _ = fromValueTask.MatchAsync(static _ => CompletedOne, static () => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync(async, sync) (ValueTask)",
+            () => _ = fromValueTask.MatchAsync(static _ => CompletedOne, static () => 0).IsCompleted);
+        Allocations.AssertNone(
+            "OrDefaultAsync(async factory) (ValueTask)",
+            () => _ = fromValueTask.OrDefaultAsync(static () => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "async query with an async second from (ValueTask)",
+            () => _ = (from value in fromValueTask from one in CompletedSomeOne select value + one).IsCompleted);
+
+        Allocations.AssertNone("MapAsync (Task)", () => _ = fromTask.MapAsync(static _ => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "BindAsync (Task)",
+            () => _ = fromTask.BindAsync(static _ => CompletedSomeOne).IsCompleted);
+        Allocations.AssertNone(
+            "FilterAsync (Task)",
+            () => _ = fromTask.FilterAsync(static _ => CompletedTrue).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync(async, async) (Task)",
+            () => _ = fromTask.MatchAsync(static _ => CompletedOne, static () => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "MatchAsync(async, sync) (Task)",
+            () => _ = fromTask.MatchAsync(static _ => CompletedOne, static () => 0).IsCompleted);
+        Allocations.AssertNone(
+            "OrDefaultAsync(async factory) (Task)",
+            () => _ = fromTask.OrDefaultAsync(static () => CompletedOne).IsCompleted);
+        Allocations.AssertNone(
+            "async query with an async second from (Task)",
+            () => _ = (from value in fromTask from one in CompletedSomeOne select value + one).IsCompleted);
+    }
+
+    // Completed in advance: a Task-returning step hands these back, so the measured code creates no task of its own.
+    private static readonly Task<int> CompletedOne = Task.FromResult(1);
+    private static readonly Task<bool> CompletedTrue = Task.FromResult(true);
+    private static readonly Task<Maybe<int>> CompletedSomeOne = Task.FromResult(Maybes.Some(1));
 
     private static Maybe<int> Half(int value) => value % 2 == 0 ? value / 2 : none;
 
