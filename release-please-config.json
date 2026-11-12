@@ -3,12 +3,11 @@
   "release-type": "simple",
   "include-v-in-tag": true,
   "include-component-in-tag": false,
-  "versioning": "prerelease",
-  "prerelease": true,
-  "prerelease-type": "beta",
+  "prerelease": false,
   "packages": {
     ".": {
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "CHANGELOG.md",
+      "release-as": "2.0.0"
     }
   }
 }

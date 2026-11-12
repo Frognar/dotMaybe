@@ -4,7 +4,7 @@
 
 A `Maybe<T>` for C# 15 built on union types: exhaustive pattern matching, query syntax, and no invalid states.
 
-> **Status:** 2.0 is a ground-up rewrite for .NET 11 and is under active development. The 1.x line is retired.
+> **Status:** 2.0 is a ground-up rewrite for .NET 11 and C# 15 unions. The 1.x line is retired.
 
 ```csharp
 using DotMaybe;
