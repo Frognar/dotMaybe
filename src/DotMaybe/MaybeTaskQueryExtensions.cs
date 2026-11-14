@@ -102,15 +102,15 @@ public static class MaybeTaskQueryExtensions
         ArgumentNullException.ThrowIfNull(resultSelector);
         return source.TryGetSome(out var value)
             ? Project(value, selector, resultSelector)
-            : ValueTask.FromResult<Maybe<TResult>>(none);
+            : ValueTask.FromResult<Maybe<TResult>>(default);
 
         static async ValueTask<Maybe<TResult>> Project(
             T value,
             Func<T, Task<Maybe<TIntermediate>>> selector,
             Func<T, TIntermediate, TResult> resultSelector) =>
             (await selector(value).ConfigureAwait(false)).TryGetSome(out var selected)
-                ? resultSelector(value, selected)
-                : none;
+                ? Maybe<TResult>.Of(resultSelector(value, selected))
+                : default;
     }
 
     /// <summary>

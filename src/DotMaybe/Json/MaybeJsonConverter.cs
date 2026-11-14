@@ -46,11 +46,11 @@ public sealed class MaybeJsonConverter<T> : JsonConverter<Maybe<T>>
     {
         if (reader.TokenType == JsonTokenType.Null)
         {
-            return none;
+            return default;
         }
 
         var value = JsonSerializer.Deserialize(ref reader, ValueInfo(options));
-        return value is null ? none : value;
+        return value is null ? default : Maybe<T>.Of(value);
     }
 
     /// <inheritdoc/>

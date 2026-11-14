@@ -224,7 +224,7 @@ public static class MaybeTaskExtensions
         static async ValueTask<Maybe<TResult>> MapAfter(ValueTask<Maybe<T>> source, Func<T, TResult> map)
         {
             var maybe = await source.ConfigureAwait(false);
-            return maybe.TryGetSome(out var value) ? map(value) : none;
+            return maybe.TryGetSome(out var value) ? Maybe<TResult>.Of(map(value)) : default;
         }
     }
 
@@ -263,7 +263,7 @@ public static class MaybeTaskExtensions
         static async ValueTask<Maybe<TResult>> BindAfter(ValueTask<Maybe<T>> source, Func<T, Maybe<TResult>> bind)
         {
             var maybe = await source.ConfigureAwait(false);
-            return maybe.TryGetSome(out var value) ? bind(value) : none;
+            return maybe.TryGetSome(out var value) ? bind(value) : default;
         }
     }
 
@@ -302,7 +302,7 @@ public static class MaybeTaskExtensions
         static async ValueTask<Maybe<T>> FilterAfter(ValueTask<Maybe<T>> source, Func<T, bool> predicate)
         {
             var maybe = await source.ConfigureAwait(false);
-            return maybe.TryGetSome(out var value) && predicate(value) ? value : none;
+            return maybe.TryGetSome(out var value) && predicate(value) ? Maybe<T>.Of(value) : default;
         }
     }
 

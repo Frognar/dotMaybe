@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace DotMaybe.PropertyTests;
 
 /// <summary>A document with optional properties, as an API would receive or return it.</summary>
-public sealed record Profile(string Name, Maybe<string> Nickname, Maybe<int> Age);
+internal sealed record Profile(string Name, Maybe<string> Nickname, Maybe<int> Age);
 
 /// <summary>An object value inside a maybe.</summary>
 public sealed record Person(string Name, int Age);
