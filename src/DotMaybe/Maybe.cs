@@ -161,7 +161,7 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
         where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(map);
-        return _isSome ? map(_value) : none;
+        return _isSome ? Maybe<TResult>.Of(map(_value)) : default;
     }
 
     /// <summary>
@@ -179,7 +179,7 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
         where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(bind);
-        return _isSome ? bind(_value) : none;
+        return _isSome ? bind(_value) : default;
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
     public Maybe<T> Filter(Func<T, bool> predicate)
     {
         ArgumentNullException.ThrowIfNull(predicate);
-        return _isSome && predicate(_value) ? this : none;
+        return _isSome && predicate(_value) ? this : default;
     }
 
     /// <summary>
@@ -247,15 +247,15 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
         ArgumentNullException.ThrowIfNull(resultSelector);
         if (!_isSome)
         {
-            return none;
+            return default;
         }
 
         if (selector(_value).TryGetSome(out var selected))
         {
-            return resultSelector(_value, selected);
+            return Maybe<TResult>.Of(resultSelector(_value, selected));
         }
 
-        return none;
+        return default;
     }
 
     /// <summary>
@@ -307,6 +307,11 @@ public readonly partial struct Maybe<T> : Maybe<T>.IUnionMembers, IEquatable<May
     /// </summary>
     /// <returns>A text representation of this maybe.</returns>
     public override string ToString() => _isSome ? $"Some({_value})" : "None";
+
+    // Library code builds maybes through Of and default (None), never through union conversions or union patterns:
+    // Stryker's bundled Roslyn still treats unions as a preview feature (CS8652) and cannot compile a mutated file that
+    // uses them. CI builds the library as C# 14 to keep it that way.
+    internal static Maybe<T> Of(T value) => IUnionMembers.Create(value);
 
     internal bool TryGetSome([MaybeNullWhen(false)] out T value)
     {

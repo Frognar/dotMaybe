@@ -42,10 +42,10 @@ public readonly partial struct Maybe<T>
     {
         if (!_isSome || !other._isSome)
         {
-            return none;
+            return default;
         }
 
-        return (_value, other._value);
+        return Maybe<(T, TOther)>.Of((_value, other._value));
     }
 
     /// <summary>
@@ -68,10 +68,10 @@ public readonly partial struct Maybe<T>
         ArgumentNullException.ThrowIfNull(combine);
         if (!_isSome || !other._isSome)
         {
-            return none;
+            return default;
         }
 
-        return combine(_value, other._value);
+        return Maybe<TResult>.Of(combine(_value, other._value));
     }
 
     /// <summary>

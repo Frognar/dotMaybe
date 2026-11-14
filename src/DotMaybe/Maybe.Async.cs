@@ -77,10 +77,10 @@ public readonly partial struct Maybe<T>
         where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(map);
-        return _isSome ? MapValueAsync(_value, map) : ValueTask.FromResult<Maybe<TResult>>(none);
+        return _isSome ? MapValueAsync(_value, map) : ValueTask.FromResult<Maybe<TResult>>(default);
 
         static async ValueTask<Maybe<TResult>> MapValueAsync(T value, Func<T, Task<TResult>> map) =>
-            await map(value).ConfigureAwait(false);
+            Maybe<TResult>.Of(await map(value).ConfigureAwait(false));
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ public readonly partial struct Maybe<T>
         where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(bind);
-        return _isSome ? Start(bind, _value) : ValueTask.FromResult<Maybe<TResult>>(none);
+        return _isSome ? Start(bind, _value) : ValueTask.FromResult<Maybe<TResult>>(default);
     }
 
     /// <summary>
@@ -108,10 +108,10 @@ public readonly partial struct Maybe<T>
     public ValueTask<Maybe<T>> FilterAsync(Func<T, Task<bool>> predicate)
     {
         ArgumentNullException.ThrowIfNull(predicate);
-        return _isSome ? FilterValueAsync(_value, predicate) : ValueTask.FromResult<Maybe<T>>(none);
+        return _isSome ? FilterValueAsync(_value, predicate) : ValueTask.FromResult<Maybe<T>>(default);
 
         static async ValueTask<Maybe<T>> FilterValueAsync(T value, Func<T, Task<bool>> predicate) =>
-            await predicate(value).ConfigureAwait(false) ? value : none;
+            await predicate(value).ConfigureAwait(false) ? Maybe<T>.Of(value) : default;
     }
 
     private static ValueTask<TResult> Start<TArg, TResult>(Func<TArg, Task<TResult>> step, TArg arg)

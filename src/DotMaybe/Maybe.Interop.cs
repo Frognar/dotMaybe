@@ -14,7 +14,7 @@ public static partial class Maybe
     /// <param name="value">The nullable value.</param>
     /// <returns>The value, or <see cref="None"/>.</returns>
     public static Maybe<T> FromNullable<T>(T? value)
-        where T : struct => value.HasValue ? value.Value : none;
+        where T : struct => value.HasValue ? Maybe<T>.Of(value.Value) : default;
 
     /// <summary>
     /// A maybe from a nullable reference: <see langword="null"/> becomes <see cref="None"/>.
@@ -27,7 +27,7 @@ public static partial class Maybe
     /// <param name="value">The nullable reference.</param>
     /// <returns>The value, or <see cref="None"/>.</returns>
     public static Maybe<T> FromNullable<T>(T? value)
-        where T : class => value is not null ? value : none;
+        where T : class => value is not null ? Maybe<T>.Of(value) : default;
 
     /// <summary>
     /// Parses <paramref name="text"/> with <c>T.TryParse</c>: the parsed value, or <see cref="None"/> when the text is
@@ -38,7 +38,7 @@ public static partial class Maybe
     /// <param name="text">The text to parse.</param>
     /// <returns>The parsed value, or <see cref="None"/>.</returns>
     public static Maybe<T> Parse<T>(string? text)
-        where T : notnull, IParsable<T> => T.TryParse(text, null, out var value) ? value : none;
+        where T : notnull, IParsable<T> => T.TryParse(text, null, out var value) ? Maybe<T>.Of(value) : default;
 
     /// <summary>
     /// Parses <paramref name="text"/> with <c>T.TryParse</c> and <paramref name="provider"/>: the parsed value, or
@@ -49,5 +49,5 @@ public static partial class Maybe
     /// <param name="provider">Culture-specific formatting information, or <see langword="null"/> for the current culture.</param>
     /// <returns>The parsed value, or <see cref="None"/>.</returns>
     public static Maybe<T> Parse<T>(string? text, IFormatProvider? provider)
-        where T : notnull, IParsable<T> => T.TryParse(text, provider, out var value) ? value : none;
+        where T : notnull, IParsable<T> => T.TryParse(text, provider, out var value) ? Maybe<T>.Of(value) : default;
 }

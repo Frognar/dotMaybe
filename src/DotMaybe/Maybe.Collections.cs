@@ -78,13 +78,13 @@ public static partial class Maybe
         {
             if (!maybe.TryGetSome(out var value))
             {
-                return none;
+                return default;
             }
 
             values.Add(value);
         }
 
-        return values;
+        return Maybe<IReadOnlyList<T>>.Of(values);
     }
 
     /// <summary>
@@ -124,10 +124,10 @@ public static partial class Maybe
         ArgumentNullException.ThrowIfNull(source);
         foreach (var value in source)
         {
-            return value;
+            return Maybe<T>.Of(value);
         }
 
-        return none;
+        return default;
     }
 
     /// <summary>The first element that satisfies <paramref name="predicate"/>, or <see cref="None"/>.</summary>
@@ -146,11 +146,11 @@ public static partial class Maybe
         {
             if (predicate(value))
             {
-                return value;
+                return Maybe<T>.Of(value);
             }
         }
 
-        return none;
+        return default;
     }
 
     /// <summary>
@@ -171,11 +171,11 @@ public static partial class Maybe
         using var values = source.GetEnumerator();
         if (!values.MoveNext())
         {
-            return none;
+            return default;
         }
 
         var first = values.Current;
-        return values.MoveNext() ? none : first;
+        return values.MoveNext() ? default : Maybe<T>.Of(first);
     }
 
     /// <summary>
@@ -192,7 +192,7 @@ public static partial class Maybe
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(predicate);
-        Maybe<T> candidate = none;
+        Maybe<T> candidate = default;
         var found = false;
         foreach (var value in source)
         {
@@ -203,10 +203,10 @@ public static partial class Maybe
 
             if (found)
             {
-                return none;
+                return default;
             }
 
-            candidate = value;
+            candidate = Maybe<T>.Of(value);
             found = true;
         }
 
@@ -232,6 +232,6 @@ public static partial class Maybe
         where TValue : notnull
     {
         ArgumentNullException.ThrowIfNull(dictionary);
-        return dictionary.TryGetValue(key, out var value) ? value : none;
+        return dictionary.TryGetValue(key, out var value) ? Maybe<TValue>.Of(value) : default;
     }
 }
